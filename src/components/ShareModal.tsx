@@ -353,7 +353,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
           )}
 
           <div className="flex justify-between items-center opacity-30 text-[8px] font-black uppercase tracking-tighter mt-4">
-            <span>{window.location.href}</span>
+            <span className="normal-case">{window.location.href}</span>
             <span>V1.0.1</span>
           </div>
         </div>
