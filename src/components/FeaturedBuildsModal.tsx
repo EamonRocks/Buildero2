@@ -1,6 +1,5 @@
 import React from 'react';
 import ModalPopup from './ModalPopup';
-import { NineSliceButton } from './NineSliceButton';
 import { useLoadout } from '../state/LoadoutContext';
 import { importLoadout } from '../state/serialization';
 import { FEATURED_BUILDS } from '../data/database';

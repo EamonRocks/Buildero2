@@ -196,12 +196,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
         }
         await navigator.share(shareData);
       } else {
-        fallbackCopy(shareData.text);
+        fallbackCopy(shareData.text || '');
         alert('Native share is only available over HTTPS. Share info has been copied to your clipboard instead!');
       }
     } catch (err) {
       if ((err as Error).name === 'AbortError') return;
-      fallbackCopy(shareData.text);
+      fallbackCopy(shareData.text || '');
       alert('Native share is only available over HTTPS. Share info has been copied to your clipboard instead!');
     } finally {
       setIsSharing(false);
