@@ -13,9 +13,10 @@ interface V1DTO {
   v: 1;
   d: {
     n: string; // build name
+    a?: string; // author
     c: [string, number, [string, number][]]; // main char: [id, stars, [[skinId, stars]]]
     r: ([string, number, [string, number][]] | null)[]; // resonances: [[id, stars, [[skinId, stars]]], null]
-    g: Partial<Record<string, [string, string, boolean, [string, number][]]>>; // gear: { slot: [id, rarity, isGodforged, [[skinId, stars]]] }
+    g: Partial<Record<string, [string, string, boolean | number, [string, number][]]>>; // gear: { slot: [id, rarity, godforge, [[skinId, stars]]] }
     ru: Record<string, ([string, string, string?, string?] | null)[]>; // runes: { cat: [[id, rarity, enchantId, enchantRarity]] }
   }
 }
@@ -45,6 +46,7 @@ export const exportLoadout = (loadout: Loadout): string => {
     v: 1,
     d: {
       n: loadout.name,
+      a: loadout.author,
       c: [
         loadout.character.id, 
         loadout.character.stars, 
@@ -66,7 +68,7 @@ export const exportLoadout = (loadout: Loadout): string => {
       dto.d.g[slot] = [
         item.id, 
         item.rarity, 
-        !!item.isGodforged, 
+        item.godforgeLevel || 0, 
         (item.activeSkins || []).map(s => [s.id, s.stars])
       ];
     }
@@ -107,6 +109,9 @@ export const importLoadout = (code: string): Loadout => {
       loadout.name = d.n;
     }
 
+    // Restore Author (with backwards compatibility)
+    loadout.author = d.a || 'Unknown';
+
     // Restore Character
     if (CHARACTER_DATABASE[d.c[0]]) {
       loadout.character = {
@@ -132,10 +137,18 @@ export const importLoadout = (code: string): Loadout => {
     Object.entries(d.g).forEach(([slot, data]) => {
       if (data && GEAR_DATABASE[data[0]]) {
         const baseGear = GEAR_DATABASE[data[0]];
+        
+        let godforgeLevel = 0;
+        if (typeof data[2] === 'boolean') {
+          godforgeLevel = data[2] ? 5 : 0;
+        } else if (typeof data[2] === 'number') {
+          godforgeLevel = data[2];
+        }
+
         loadout.gear[slot as keyof Loadout['gear']] = {
           ...baseGear,
           rarity: data[1] as GearRarity,
-          isGodforged: data[2],
+          godforgeLevel,
           activeSkins: data[3].map(s => ({ id: s[0], stars: s[1] }))
         } as GearItem;
       }

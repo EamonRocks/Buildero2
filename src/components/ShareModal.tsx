@@ -47,11 +47,15 @@ const GameCheckbox = ({ checked, label, onChange }: { checked: boolean, label: s
   </div>
 );
 
+const ENABLE_IMAGE_SHARE_SHEET = true;
+
 export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
   const { state, dispatch } = useLoadout();
   const [buildName, setBuildName] = useState('');
+  const [author, setAuthor] = useState('');
   const [copied, setCopied] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [shareGear, setShareGear] = useState(true);
   const [shareRunes, setShareRunes] = useState(true);
   
@@ -62,6 +66,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       setBuildName(state.name === 'New Build' ? '' : state.name);
+      setAuthor(state.author || '');
       setShareGear(true);
       setShareRunes(true);
       setCopied(false);
@@ -71,10 +76,11 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  const getFilteredLoadout = (nameOverride?: string): Loadout => {
+  const getFilteredLoadout = (nameOverride?: string, authorOverride?: string): Loadout => {
     return {
       ...state,
       name: nameOverride || buildName.trim() || 'New Build',
+      author: authorOverride || author.trim() || 'Unknown',
       gear: shareGear ? state.gear : {},
       runes: shareRunes ? state.runes : JSON.parse(JSON.stringify(initialState.runes))
     };
@@ -84,12 +90,19 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
   const exportCode = useMemo(() => {
     if (!isOpen) return '';
     return exportLoadout(getFilteredLoadout());
-  }, [isOpen, shareGear, shareRunes, buildName, state]);
+  }, [isOpen, shareGear, shareRunes, buildName, author, state]);
 
   const isNameValid = (name: string) => {
     const trimmed = name.trim();
-    if (trimmed.length > 40) return false;
+    if (trimmed.length === 0 || trimmed.length > 40) return false;
     const regex = /^[a-zA-Z0-9\s!@#$%^&*()_+\-=[\]{}|;':",./<>?]*$/;
+    return regex.test(trimmed);
+  };
+
+  const isAuthorValid = (name: string) => {
+    const trimmed = name.trim();
+    if (trimmed.length === 0 || trimmed.length > 20) return false;
+    const regex = /^[a-zA-Z0-9\s]*$/;
     return regex.test(trimmed);
   };
 
@@ -97,6 +110,13 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
     const val = e.target.value;
     if (val.length <= 40) {
       setBuildName(val);
+    }
+  };
+
+  const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (val.length <= 20) {
+      setAuthor(val);
     }
   };
 
@@ -119,8 +139,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
   const handleCopy = () => {
     const finalName = buildName.trim() || 'New Build';
+    const finalAuthor = author.trim() || 'Unknown';
     dispatch({ type: 'SET_NAME', payload: finalName });
-    const finalCode = exportLoadout(getFilteredLoadout(finalName));
+    dispatch({ type: 'SET_AUTHOR', payload: finalAuthor });
+    const finalCode = exportLoadout(getFilteredLoadout(finalName, finalAuthor));
     
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(finalCode).then(() => {
@@ -140,16 +162,38 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
   const handleShareSheet = async () => {
     const finalName = buildName.trim() || 'New Build';
+    const finalAuthor = author.trim() || 'Unknown';
     dispatch({ type: 'SET_NAME', payload: finalName });
-    const finalCode = exportLoadout(getFilteredLoadout(finalName));
+    dispatch({ type: 'SET_AUTHOR', payload: finalAuthor });
+    const finalCode = exportLoadout(getFilteredLoadout(finalName, finalAuthor));
     
-    const shareData = {
+    const shareData: ShareData = {
       title: 'Archero 2 Build',
-      text: `Check out ${finalName} at ${window.location.href} ! Import code: ${finalCode}`,
+      text: `Check out ${finalName} by ${finalAuthor} at ${window.location.href} ! Import code: ${finalCode}`,
     };
 
+    setIsSharing(true);
     try {
       if (navigator.share) {
+        if (ENABLE_IMAGE_SHARE_SHEET && captureRef.current) {
+          try {
+            const blob = await htmlToImage.toBlob(captureRef.current, {
+              quality: 0.95,
+              pixelRatio: 2,
+              backgroundColor: '#0a0a0c',
+              cacheBust: true,
+            });
+
+            if (blob) {
+              const file = new File([blob], `archero2-build-${finalName}.png`, { type: 'image/png' });
+              if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                shareData.files = [file];
+              }
+            }
+          } catch (imageErr) {
+            console.error('Image generation for share sheet failed:', imageErr);
+          }
+        }
         await navigator.share(shareData);
       } else {
         fallbackCopy(shareData.text);
@@ -159,12 +203,16 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
       if ((err as Error).name === 'AbortError') return;
       fallbackCopy(shareData.text);
       alert('Native share is only available over HTTPS. Share info has been copied to your clipboard instead!');
+    } finally {
+      setIsSharing(false);
     }
   };
 
   const handleDownloadImage = async () => {
     const finalName = buildName.trim() || 'New Build';
+    const finalAuthor = author.trim() || 'Unknown';
     dispatch({ type: 'SET_NAME', payload: finalName });
+    dispatch({ type: 'SET_AUTHOR', payload: finalAuthor });
     
     if (!captureRef.current) return;
     setIsGeneratingImage(true);
@@ -244,9 +292,13 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
       <div className="fixed top-0 left-[-9999px] pointer-events-none opacity-0 -z-50 overflow-hidden">
         <img src={`${import.meta.env.BASE_URL}assets/ui/Title_Boss.png`} alt="" className="hidden" />
         <div ref={captureRef} className="flex flex-col bg-[#0a0a0c] p-6 gap-0 w-[480px] text-white">
-          <div className="flex flex-col items-center gap-2 mb-6">
+          <div className="flex flex-col items-center gap-2 mb-6 text-center">
             <img src={`${import.meta.env.BASE_URL}assets/LOGO_EN.png`} alt="" className="w-48 h-auto" />
-            <span className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Buildero 2 Loadout</span>
+            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest">
+              <span style={{ color: '#cead7b' }}>{buildName.trim() || 'New Build'}</span>
+              <span className="text-zinc-500">by</span>
+              <span className="text-zinc-500">{author.trim() || 'Unknown'}</span>
+            </div>
           </div>
 
           {shareGear && (
@@ -301,8 +353,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
           )}
 
           <div className="flex justify-between items-center opacity-30 text-[8px] font-black uppercase tracking-tighter mt-4">
-            <span>{buildName.trim() || 'New Build'}</span>
-            <span>v1.0.0</span>
+            <span>{window.location.href}</span>
+            <span>V1.0.1</span>
           </div>
         </div>
       </div>
@@ -310,59 +362,73 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
   };
 
   const nameIsValid = isNameValid(buildName);
+  const authorIsValid = isAuthorValid(author);
   const anyOptionChecked = shareGear || shareRunes;
-
-  const actionButtons = (
-    <div className="grid grid-cols-2 gap-3 w-full">
-      <NineSliceButton
-        imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Blue_S.png`}
-        onClick={handleShareSheet}
-        disabled={!anyOptionChecked}
-        className={`h-12 text-[10px] font-black uppercase ${!anyOptionChecked ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
-      >
-        <div className="flex items-center">
-          <ShareIcon />
-          Share
-        </div>
-      </NineSliceButton>
-      
-      <NineSliceButton
-        imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`}
-        onClick={handleDownloadImage}
-        disabled={isGeneratingImage || !anyOptionChecked}
-        className={`h-12 text-[10px] font-black uppercase ${(!anyOptionChecked || isGeneratingImage) ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
-      >
-        <div className="flex items-center">
-          <ImageIcon />
-          {isGeneratingImage ? 'Exporting...' : 'Export as Image'}
-        </div>
-      </NineSliceButton>
-    </div>
-  );
+  const isFormValid = nameIsValid && authorIsValid && anyOptionChecked;
 
   return (
     <ModalPopup 
       isOpen={isOpen} 
       onClose={onClose} 
       title="Share Build"
-      actions={actionButtons}
+      actions={
+        <div className="grid grid-cols-2 gap-3 w-full">
+          <NineSliceButton
+            imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Blue_S.png`}
+            onClick={handleShareSheet}
+            disabled={!isFormValid || isSharing}
+            className={`h-12 text-[10px] font-black uppercase ${(!isFormValid || isSharing) ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
+          >
+            <div className="flex items-center">
+              {isSharing ? null : <ShareIcon />}
+              {isSharing ? 'Sharing...' : 'Share'}
+            </div>
+          </NineSliceButton>
+          
+          <NineSliceButton
+            imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`}
+            onClick={handleDownloadImage}
+            disabled={isGeneratingImage || !isFormValid}
+            className={`h-12 text-[10px] font-black uppercase ${(!isFormValid || isGeneratingImage) ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
+          >
+            <div className="flex items-center">
+              <ImageIcon />
+              {isGeneratingImage ? 'Exporting...' : 'Export as Image'}
+            </div>
+          </NineSliceButton>
+        </div>
+      }
     >
       <div className="flex flex-col gap-4 p-1">
         <ModalSubsection title="Build Settings">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-1">
+              <label className="text-[9px] font-black uppercase text-[#4a3424] opacity-50 px-1">Build Name</label>
               <input
                 ref={inputRef}
                 type="text"
                 value={buildName}
                 onChange={handleNameChange}
                 placeholder="New Build"
-                className={`w-full bg-white/50 border rounded-lg p-3 text-sm font-bold text-[#4a3424] outline-none transition-all placeholder-[#4a3424]/30 ${
+                className={`w-full bg-white/50 border rounded-lg p-2.5 text-sm font-bold text-[#4a3424] outline-none transition-all placeholder-[#4a3424]/30 ${
                   buildName.trim() !== '' && !nameIsValid ? 'border-red-400 focus:border-red-500' : 'border-[#4a3424]/20 focus:border-accent/50'
                 }`}
               />
-              {buildName.trim() !== '' && !nameIsValid && (
-                <p className="text-[10px] text-red-600 font-bold px-1">
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[9px] font-black uppercase text-[#4a3424] opacity-50 px-1">Author</label>
+              <input
+                type="text"
+                value={author}
+                onChange={handleAuthorChange}
+                placeholder="Your Name"
+                className={`w-full bg-white/50 border rounded-lg p-2.5 text-sm font-bold text-[#4a3424] outline-none transition-all placeholder-[#4a3424]/30 ${
+                  author.trim() !== '' && !authorIsValid ? 'border-red-400 focus:border-red-500' : 'border-[#4a3424]/20 focus:border-accent/50'
+                }`}
+              />
+              {author.trim() !== '' && !authorIsValid && (
+                <p className="text-[9px] text-red-600 font-bold px-1">
                   1-20 characters, letters/numbers only
                 </p>
               )}
@@ -389,14 +455,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
               <textarea
                 readOnly
                 value={exportCode}
-                className={`w-full h-16 bg-black/10 border border-[#4a3424]/20 rounded-lg p-2 text-[9px] font-mono break-all resize-none text-[#4a3424] focus:outline-none ${!anyOptionChecked ? 'opacity-30' : ''}`}
+                className={`w-full h-16 bg-black/10 border border-[#4a3424]/20 rounded-lg p-2 text-[9px] font-mono break-all resize-none text-[#4a3424] focus:outline-none ${!isFormValid ? 'opacity-30' : ''}`}
               />
               <div className="absolute bottom-1.5 right-1.5">
                 <NineSliceButton
                   imageSrc={copied ? `${import.meta.env.BASE_URL}assets/ui/Btn_Green_S.png` : `${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`}
                   onClick={handleCopy}
-                  disabled={!anyOptionChecked}
-                  className={`h-7 px-3 text-[9px] ${!anyOptionChecked ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+                  disabled={!isFormValid}
+                  className={`h-7 px-3 text-[9px] ${!isFormValid ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
                 >
                   {copied ? 'Copied!' : 'Copy Code'}
                 </NineSliceButton>

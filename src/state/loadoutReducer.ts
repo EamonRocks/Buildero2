@@ -13,11 +13,13 @@ export type LoadoutAction =
   | { type: 'SET_RUNE', payload: { category: RuneCategory; index: number; item: RuneItem | undefined } }
   | { type: 'SET_RUNE_ENCHANT'; payload: { category: RuneCategory; index: number; enchantId: string | undefined; rarity: EnchantRarity | undefined } }
   | { type: 'LOAD_LOADOUT'; payload: Loadout }
-  | { type: 'SET_NAME'; payload: string };
+  | { type: 'SET_NAME'; payload: string }
+  | { type: 'SET_AUTHOR'; payload: string };
 
 
 export const initialState: Loadout = {
   name: 'New Build',
+  author: '',
   character: {
     id: 'atreus',
     stars: 0,
@@ -40,6 +42,8 @@ export function loadoutReducer(state: Loadout, action: LoadoutAction): Loadout {
   switch (action.type) {
     case 'SET_NAME':
       return { ...state, name: action.payload };
+    case 'SET_AUTHOR':
+      return { ...state, author: action.payload };
     case 'LOAD_LOADOUT':
       return action.payload;
     case 'SET_CHARACTER': {
@@ -176,13 +180,16 @@ export function loadoutReducer(state: Loadout, action: LoadoutAction): Loadout {
       const gearItem = state.gear[slot];
       if (!gearItem) return state;
 
+      const currentLevel = gearItem.godforgeLevel || 0;
+      const nextLevel = (currentLevel + 1) % 6;
+
       return {
         ...state,
         gear: {
           ...state.gear,
           [slot]: {
             ...gearItem,
-            isGodforged: !gearItem.isGodforged,
+            godforgeLevel: nextLevel,
           },
         },
       };

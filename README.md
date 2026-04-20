@@ -1,58 +1,28 @@
 # Buildero 2
 
-Buildero 2 is a specialized web application designed for **Archero 2** players to create, visualize, and share their character builds. It provides a familiar, in-game-like interface optimized for mobile devices, allowing for seamless loadout experimentation.
+Buildero 2 is a specialized web application designed for **Archero 2** players to create, visualize, and share their character builds. It features a high-fidelity inventory replica optimized for mobile devices, allowing players to experiment with gear, runes, and heroes in a familiar environment.
 
-## 🚀 Key Features
+## 🗺️ Roadmap
 
-- **Loadout Creator**: Fully customize your build by selecting gear pieces, runes, enchants, heroes, and skins.
-- **In-Game Replica UI**: A mobile-first design that closely mirrors the Archero 2 inventory screen for an intuitive and familiar experience.
-- **Build Sharing**: Export your builds as compact text strings that others can easily import to see your exact configuration.
-- **Privacy-First & No Accounts**: Your builds are saved locally in your browser using LocalStorage. No registration or backend accounts are required.
-- **PWA Support**: Install Buildero 2 as a Progressive Web App on your mobile device for quick access.
+- [ ] **Implementation of V2 Compact Export Format:** Transitioning to a Base62 tagged-section system to significantly shorten build codes.
+- [ ] **Improve Layout:** Move and resize character and skin portraits to better fill the space in the app view and exported image.
 
-## 🛠️ Tech Stack
+## 📜 Changelog
 
-- **Framework**: [React](https://reactjs.org/) with [TypeScript](https://www.typescriptlang.org/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **State Management**: React Context API
-- **Serialization**: `lz-string` for compact build codes
+### [V1.0.1] - 2026-04-20
+- **Native Image Sharing:** Attaches exported images directly to the native share sheet with loading state.
+- **Godforge Revamp:** Star system changed from boolean to a 0-5 numeric level scale.
+- **Author Attribution:** Added a required "Author" field to build sharing metadata.
+- **Featured Builds UX:** Entire tiles are now clickable for loading; redundant buttons removed.
+- **Export Branding:** Updated share image header with `[Build] by [Author]` and applied branding colors.
+- **URL Integration:** Exported images now include the application URL in the footer for easy reference.
 
-## 📦 Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [npm](https://www.npmjs.com/)
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/buildero2.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd buildero2
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-
-Run the development server:
-```bash
-npm run dev
-```
-
-### Build
-
-Build the project for production:
-```bash
-npm run build
-```
+### [V1.0.0] - 2026-04-15
+- Initial release of Buildero 2.
+- Core loadout system for Heroes, Gear, and Runes.
+- V1 Serialization system using LZString-compressed JSON.
+- "Featured Builds" showcase.
+- Share as Image functionality.
 
 ## 📄 License
 

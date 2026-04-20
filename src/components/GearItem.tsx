@@ -66,7 +66,7 @@ export const GearItem: React.FC<GearItemProps> = ({
           className="absolute -top-2 left-1/2 -translate-x-1/2 z-40 w-8 h-8 transition-transform active:scale-90"
         >
           <img 
-            src={item.isGodforged ? `${import.meta.env.BASE_URL}assets/gear/yes_godforge.png` : `${import.meta.env.BASE_URL}assets/gear/no_godforge.png`} 
+            src={`${import.meta.env.BASE_URL}assets/gear/godforge_${item.godforgeLevel || 0}.png`} 
             alt="Godforge" 
             className="w-full h-full object-contain"
           />

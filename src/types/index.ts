@@ -1,4 +1,4 @@
-export const VERSION = '1.0.0';
+export const VERSION = '1.0.1';
 
 export type GearRarity = 
   | 'common' | 'fine' | 'rare' | 'epic' | 'epic_1' | 'epic_2' 
@@ -50,7 +50,7 @@ export interface GearItem {
   isSTier: boolean;
   skins?: string[]; // Available skin IDs
   activeSkins?: SkinState[]; // Max 3, only for weapon
-  isGodforged?: boolean;
+  godforgeLevel?: number;
 }
 
 export interface Enchantment {
@@ -88,6 +88,7 @@ export interface Character {
 
 export interface Loadout {
   name: string;
+  author?: string;
   character: CharacterState;
   resonances: (CharacterState | undefined)[]; // Max 2 slots
   gear: {

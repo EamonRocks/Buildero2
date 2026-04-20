@@ -16,7 +16,7 @@ describe('Loadout Serialization', () => {
       undefined
     ],
     gear: {
-      weapon: { id: 'oracle_weapon', name: 'Oracle Spear', type: 'weapon', set: 'oracle', rarity: 'mythic', isSTier: true, isGodforged: true, activeSkins: [{ id: 'goldwish_cudgel', stars: 1 }] },
+      weapon: { id: 'oracle_weapon', name: 'Oracle Spear', type: 'weapon', set: 'oracle', rarity: 'mythic', isSTier: true, godforgeLevel: 5, activeSkins: [{ id: 'goldwish_cudgel', stars: 1 }] },
       armor: { id: 'oracle_armor', name: 'Oracle Armor', type: 'armor', set: 'oracle', rarity: 'legendary', isSTier: true }
     },
     runes: {
@@ -50,7 +50,7 @@ describe('Loadout Serialization', () => {
     
     expect(imported.gear.weapon?.id).toBe(mockLoadout.gear.weapon?.id);
     expect(imported.gear.weapon?.rarity).toBe(mockLoadout.gear.weapon?.rarity);
-    expect(imported.gear.weapon?.isGodforged).toBe(true);
+    expect(imported.gear.weapon?.godforgeLevel).toBe(5);
     expect(imported.gear.weapon?.activeSkins).toEqual(mockLoadout.gear.weapon?.activeSkins);
     
     expect(imported.runes.enhancement[0].item?.id).toBe(mockLoadout.runes.enhancement[0].item?.id);
