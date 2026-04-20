@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { loadoutReducer, LoadoutAction, initialState } from './loadoutReducer';
+import { loadoutReducer, initialState } from './loadoutReducer';
+import type { LoadoutAction } from './loadoutReducer';
 import type { GearItem, RuneItem } from '../types';
 
 describe('loadoutReducer', () => {

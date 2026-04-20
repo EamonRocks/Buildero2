@@ -15,7 +15,7 @@ interface CharacterItemProps {
 const StarIcon = ({ filled }: { filled: boolean }) => (
   <div className="w-full h-full relative">
     <img 
-      src={filled ? "/assets/ui/Star_Full.png" : "/assets/ui/Star_Empty.png"} 
+      src={filled ? `${import.meta.env.BASE_URL}assets/ui/Star_Full.png` : `${import.meta.env.BASE_URL}assets/ui/Star_Empty.png`} 
       alt="" 
       className="w-full h-full object-contain"
     />
@@ -97,7 +97,7 @@ export const CharacterItem: React.FC<CharacterItemProps> = ({
         {skinData ? (
           <div className="w-full h-full flex flex-col items-center justify-center">
             <img 
-              src={`/assets/characters/skin_${characterId}_${skinData.id}.png`} 
+              src={`${import.meta.env.BASE_URL}assets/characters/skin_${characterId}_${skinData.id}.png`} 
               className="w-full h-full object-cover"
               alt={skinData.name}
             />
@@ -122,7 +122,7 @@ export const CharacterItem: React.FC<CharacterItemProps> = ({
           className="relative w-[70%] aspect-square border-2 border-zinc-800 rounded-xl overflow-hidden shadow-xl bg-zinc-900 transition-transform active:scale-95 group hover:border-accent/30"
         >
           <img 
-            src={`/assets/characters/character_${characterId}.png`} 
+            src={`${import.meta.env.BASE_URL}assets/characters/character_${characterId}.png`} 
             alt={characterId} 
             className="w-full h-full object-cover"
           />

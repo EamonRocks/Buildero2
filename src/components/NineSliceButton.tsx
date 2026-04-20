@@ -14,18 +14,18 @@ export interface NineSliceConfig {
  * Registry of known UI assets and their optimal 9-slice settings.
  */
 export const UI_ASSETS_CONFIG: Record<string, NineSliceConfig> = {
-  '/assets/ui/Btn_Blue_L.png': { slice: 40, borderWidth: "20px" },
-  '/assets/ui/Btn_Yellow_L.png': { slice: 40, borderWidth: "20px" },
-  '/assets/ui/Btn_Green_S.png': { slice: 35, borderWidth: "16px" },
-  '/assets/ui/Btn_Red_S.png': { slice: 35, borderWidth: "16px" },
-  '/assets/ui/Btn_Purple_S.png': { slice: 35, borderWidth: "16px" },
-  '/assets/ui/Btn_Gray_S.png': { slice: 35, borderWidth: "16px" },
-  '/assets/ui/BG_Selected.png': { slice: 25, borderWidth: "12px" },
-  '/assets/ui/BGTop_Popup.png': { slice: 40, borderWidth: "24px" },
-  '/assets/ui/bg_chat_01.png': { slice: 40, borderWidth: "24px" },
-  '/assets/ui/Btn_Yellow_S.png': { slice: 35, borderWidth: "16px" },
-  '/assets/ui/tab_weixuanzhong_2.png': { slice: 30, borderWidth: "12px" },
-  '/assets/ui/tab_xuanzhong_3.png': { slice: 30, borderWidth: "12px" },
+  [`${import.meta.env.BASE_URL}assets/ui/Btn_Blue_L.png`]: { slice: 40, borderWidth: "20px" },
+  [`${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_L.png`]: { slice: 40, borderWidth: "20px" },
+  [`${import.meta.env.BASE_URL}assets/ui/Btn_Green_S.png`]: { slice: 35, borderWidth: "16px" },
+  [`${import.meta.env.BASE_URL}assets/ui/Btn_Red_S.png`]: { slice: 35, borderWidth: "16px" },
+  [`${import.meta.env.BASE_URL}assets/ui/Btn_Purple_S.png`]: { slice: 35, borderWidth: "16px" },
+  [`${import.meta.env.BASE_URL}assets/ui/Btn_Gray_S.png`]: { slice: 35, borderWidth: "16px" },
+  [`${import.meta.env.BASE_URL}assets/ui/BG_Selected.png`]: { slice: 25, borderWidth: "12px" },
+  [`${import.meta.env.BASE_URL}assets/ui/BGTop_Popup.png`]: { slice: 40, borderWidth: "24px" },
+  [`${import.meta.env.BASE_URL}assets/ui/bg_chat_01.png`]: { slice: 40, borderWidth: "24px" },
+  [`${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`]: { slice: 35, borderWidth: "16px" },
+  [`${import.meta.env.BASE_URL}assets/ui/tab_weixuanzhong_2.png`]: { slice: 30, borderWidth: "12px" },
+  [`${import.meta.env.BASE_URL}assets/ui/tab_xuanzhong_3.png`]: { slice: 30, borderWidth: "12px" },
 };
 
 interface NineSliceButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

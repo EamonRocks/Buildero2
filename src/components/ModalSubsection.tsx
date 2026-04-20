@@ -12,7 +12,7 @@ interface ModalSubsectionProps {
  * while maintaining the crisp color transition line.
  */
 const ModalSubsection: React.FC<ModalSubsectionProps> = ({ title, children, className = "" }) => {
-  const imageSrc = "/assets/ui/bar_dafuweng_libao.png";
+  const imageSrc = `${import.meta.env.BASE_URL}assets/ui/bar_dafuweng_libao.png`;
   
   return (
     <div className={`w-full flex flex-col ${className}`}>

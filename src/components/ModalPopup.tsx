@@ -24,7 +24,7 @@ const ModalPopup: React.FC<ModalPopupProps> = ({ isOpen, onClose, title, childre
         {title && (
           <div className="absolute -top-6 z-20 w-[63%] h-16 flex items-center justify-center pointer-events-none">
              <img 
-              src="/assets/ui/Title_3.png" 
+              src={`${import.meta.env.BASE_URL}assets/ui/Title_3.png`} 
               alt="" 
               className="absolute inset-0 w-full h-full object-fill"
             />
@@ -49,7 +49,7 @@ const ModalPopup: React.FC<ModalPopupProps> = ({ isOpen, onClose, title, childre
           style={{
             borderStyle: "solid",
             borderWidth: "40px",
-            borderImageSource: "url(/assets/ui/BG_Popup.png)",
+            borderImageSource: `url(${import.meta.env.BASE_URL}assets/ui/BG_Popup.png)`,
             borderImageSlice: "70 fill",
             borderImageWidth: "40px",
             borderImageRepeat: "stretch",
@@ -63,7 +63,7 @@ const ModalPopup: React.FC<ModalPopupProps> = ({ isOpen, onClose, title, childre
             className="absolute top-[-26px] right-[-26px] z-30 w-10 h-10 active:scale-95 transition-transform"
             aria-label="Close"
           >
-            <img src="/assets/ui/Btn_Close_Pop.png" alt="" className="w-full h-full" />
+            <img src={`${import.meta.env.BASE_URL}assets/ui/Btn_Close_Pop.png`} alt="" className="w-full h-full" />
           </button>
 
           {/* Internal Content Texture (bg_chat_01.png) */}
@@ -71,7 +71,7 @@ const ModalPopup: React.FC<ModalPopupProps> = ({ isOpen, onClose, title, childre
             style={{
               borderStyle: "solid",
               borderWidth: "12px",
-              borderImageSource: "url(/assets/ui/bg_chat_01.png)",
+              borderImageSource: `url(${import.meta.env.BASE_URL}assets/ui/bg_chat_01.png)`,
               borderImageSlice: "40 fill",
               borderImageWidth: "12px",
               borderImageRepeat: "stretch",

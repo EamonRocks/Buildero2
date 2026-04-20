@@ -58,7 +58,7 @@ const getRarityColor = (r: string) => {
 const StarIcon = ({ filled, hovered }: { filled: boolean; hovered: boolean; isBreakpoint: boolean }) => (
   <div className={`w-full h-full relative ${hovered ? "scale-110" : ""} transition-transform`}>
     <img 
-      src={filled || hovered ? "/assets/ui/Star_Full.png" : "/assets/ui/Star_Empty.png"} 
+      src={filled || hovered ? `${import.meta.env.BASE_URL}assets/ui/Star_Full.png` : `${import.meta.env.BASE_URL}assets/ui/Star_Empty.png`} 
       alt="" 
       className="w-full h-full object-contain"
     />
@@ -202,7 +202,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
             className="w-7 h-7 flex items-center justify-center active:scale-90 transition-transform"
           >
             <img 
-              src="/assets/ui/btn_close_dark.png" 
+              src={`${import.meta.env.BASE_URL}assets/ui/btn_close_dark.png`} 
               alt="Clear" 
               className="w-full h-full object-contain"
             />
@@ -333,16 +333,16 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
                  ) : (
                    <>
                      {type === 'character' || type === 'resonance' ? (
-                        <img src={`/assets/characters/character_${item.id}.png`} className="w-full h-full object-cover rounded-lg" />
+                        <img src={`${import.meta.env.BASE_URL}assets/characters/character_${item.id}.png`} className="w-full h-full object-cover rounded-lg" />
                      ) : type === 'skin' ? (
                         <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden rounded-md">
                           {targetId === 'weapon' ? (
                              <>
-                               <img src={`/assets/frames/gear/frame_${(item as WeaponSkin).rarity}.png`} className="absolute inset-0 w-full h-full object-cover" />
-                               <img src={`/assets/gear/skin_${state.gear.weapon?.set}_${item.id}.png`} className="relative z-10 w-full h-full object-cover" />
+                               <img src={`${import.meta.env.BASE_URL}assets/frames/gear/frame_${(item as WeaponSkin).rarity}.png`} className="absolute inset-0 w-full h-full object-cover" />
+                               <img src={`${import.meta.env.BASE_URL}assets/gear/skin_${state.gear.weapon?.set}_${item.id}.png`} className="relative z-10 w-full h-full object-cover" />
                              </>
                           ) : (
-                             <img src={`/assets/characters/skin_${item.characterId}_${item.id}.png`} className="w-full h-full object-cover" />
+                             <img src={`${import.meta.env.BASE_URL}assets/characters/skin_${item.characterId}_${item.id}.png`} className="w-full h-full object-cover" />
                           )}
                         </div>
                      ) : (
@@ -351,7 +351,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
                             <GearItemComponent item={{...item, rarity: selectedRarity}} className="w-full h-full scale-110" showExtras={false} /> :
                             <RuneItemComponent item={{...item, rarity: selectedRarity}} className="w-full h-full scale-110" />
                         ) : (
-                          <img src={`/assets/${type === 'gear' ? 'gear' : 'runes'}/${type === 'gear' ? '' : 'rune_'}${item.id}.png`} className="w-full h-full object-contain" />
+                          <img src={`${import.meta.env.BASE_URL}assets/${type === 'gear' ? 'gear' : 'runes'}/${type === 'gear' ? '' : 'rune_'}${item.id}.png`} className="w-full h-full object-contain" />
                         )
                      )}
                    </>
@@ -375,7 +375,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
     <>
       {(type === 'gear' || type === 'rune' || type === 'enchant' || type === 'resonance' || type === 'skin') && (
         <NineSliceButton
-          imageSrc="/assets/ui/Btn_Red_S.png"
+          imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Red_S.png`}
           onClick={handleClear}
           className="flex-1 h-11 text-xs"
         >
@@ -383,7 +383,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
         </NineSliceButton>
       )}
       <NineSliceButton
-        imageSrc={(!selectedItem || (type !== 'character' && type !== 'resonance' && type !== 'skin' && !selectedRarity)) ? "/assets/ui/Btn_Gray_S.png" : "/assets/ui/Btn_Yellow_S.png"}
+        imageSrc={(!selectedItem || (type !== 'character' && type !== 'resonance' && type !== 'skin' && !selectedRarity)) ? `${import.meta.env.BASE_URL}assets/ui/Btn_Gray_S.png` : `${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`}
         onClick={handleConfirm}
         disabled={!selectedItem || (type !== 'character' && type !== 'resonance' && type !== 'skin' && !selectedRarity)}
         className="flex-1 h-11 text-xs"

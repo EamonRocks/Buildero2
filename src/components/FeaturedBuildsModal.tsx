@@ -38,7 +38,7 @@ export const FeaturedBuildsModal: React.FC<FeaturedBuildsModalProps> = ({ isOpen
               style={{
                 borderStyle: 'solid',
                 borderWidth: '12px',
-                borderImageSource: 'url(/assets/ui/BGTop_Popup.png)',
+                borderImageSource: `url(${import.meta.env.BASE_URL}assets/ui/BGTop_Popup.png)`,
                 borderImageSlice: '40 fill',
                 borderImageRepeat: 'stretch',
               }}
@@ -50,7 +50,7 @@ export const FeaturedBuildsModal: React.FC<FeaturedBuildsModalProps> = ({ isOpen
             
             <div className="relative z-10 scale-90">
               <NineSliceButton
-                imageSrc="/assets/ui/Btn_Blue_S.png"
+                imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Blue_S.png`}
                 onClick={() => handleLoad(build.code)}
                 className="h-8 px-4 text-[10px] font-black"
               >

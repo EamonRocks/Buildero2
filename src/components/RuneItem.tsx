@@ -19,8 +19,8 @@ const RARITY_COLORS: Record<string, string> = {
 };
 
 export const RuneItem: React.FC<RuneItemProps> = ({ item, enchantId, enchantRarity, className = '' }) => {
-  const frameSrc = `/assets/frames/runes/${item.category}/frame_${item.rarity}.png`;
-  const iconSrc = `/assets/runes/rune_${item.id}.png`;
+  const frameSrc = `${import.meta.env.BASE_URL}assets/frames/runes/${item.category}/frame_${item.rarity}.png`;
+  const iconSrc = `${import.meta.env.BASE_URL}assets/runes/rune_${item.id}.png`;
 
   const getEnchantName = () => {
     if (!enchantId) return '';

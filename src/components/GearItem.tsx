@@ -25,9 +25,9 @@ export const GearItem: React.FC<GearItemProps> = ({
   onSkinClick,
   hideEmptySkins = false
 }) => {
-  const frameSrc = `/assets/frames/gear/frame_${item.rarity}.png`;
-  const iconSrc = `/assets/gear/${item.id}.png`;
-  const sTierSrc = `/assets/gear/s_tier_badge.png`;
+  const frameSrc = `${import.meta.env.BASE_URL}assets/frames/gear/frame_${item.rarity}.png`;
+  const iconSrc = `${import.meta.env.BASE_URL}assets/gear/${item.id}.png`;
+  const sTierSrc = `${import.meta.env.BASE_URL}assets/gear/s_tier_badge.png`;
 
   const canGodforge = RARITY_ORDER.indexOf(item.rarity) >= RARITY_ORDER.indexOf('mythic_3');
 
@@ -66,7 +66,7 @@ export const GearItem: React.FC<GearItemProps> = ({
           className="absolute -top-2 left-1/2 -translate-x-1/2 z-40 w-8 h-8 transition-transform active:scale-90"
         >
           <img 
-            src={item.isGodforged ? "/assets/gear/yes_godforge.png" : "/assets/gear/no_godforge.png"} 
+            src={item.isGodforged ? `${import.meta.env.BASE_URL}assets/gear/yes_godforge.png` : `${import.meta.env.BASE_URL}assets/gear/no_godforge.png`} 
             alt="Godforge" 
             className="w-full h-full object-contain"
           />
@@ -100,11 +100,11 @@ export const GearItem: React.FC<GearItemProps> = ({
                 {skinData && (
                   <>
                     <img 
-                      src={`/assets/frames/gear/frame_${skinData.rarity}.png`} 
+                      src={`${import.meta.env.BASE_URL}assets/frames/gear/frame_${skinData.rarity}.png`} 
                       className="absolute inset-0 w-full h-full object-cover"
                     />
                     <img 
-                      src={`/assets/gear/skin_${item.set}_${skinData.id}.png`} 
+                      src={`${import.meta.env.BASE_URL}assets/gear/skin_${item.set}_${skinData.id}.png`} 
                       alt={skinData.id} 
                       className="relative z-10 w-full h-full object-cover"
                     />

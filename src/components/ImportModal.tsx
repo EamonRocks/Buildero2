@@ -45,7 +45,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({ isOpen, onClose }) => 
             {error && <p className="text-[10px] text-red-600 font-bold px-1">{error}</p>}
             <div className="flex justify-end mt-2">
               <NineSliceButton
-                imageSrc="/assets/ui/Btn_Blue_L.png"
+                imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Blue_L.png`}
                 onClick={handleImport}
                 className="h-10 px-8 text-[12px] font-black"
                 disabled={!importCode}

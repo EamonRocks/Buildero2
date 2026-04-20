@@ -18,11 +18,11 @@ describe('GearItem', () => {
     
     const gearIcon = screen.getByAltText(/Oracle Sword/i);
     expect(gearIcon).toBeInTheDocument();
-    expect(gearIcon).toHaveAttribute('src', '/assets/gear/oracle_weapon.png');
+    expect(gearIcon).toHaveAttribute('src', expect.stringContaining('assets/gear/oracle_weapon.png'));
 
     const frame = screen.getByAltText(/epic/i);
     expect(frame).toBeInTheDocument();
-    expect(frame).toHaveAttribute('src', '/assets/frames/gear/frame_epic.png');
+    expect(frame).toHaveAttribute('src', expect.stringContaining('assets/frames/gear/frame_epic.png'));
   });
 
   it('renders the S-Tier badge when applicable', () => {

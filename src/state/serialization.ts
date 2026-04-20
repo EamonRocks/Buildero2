@@ -1,7 +1,7 @@
 import LZString from 'lz-string';
 import { GEAR_DATABASE, RUNE_DATABASE, CHARACTER_DATABASE } from '../data/database';
 import { initialState } from './loadoutReducer';
-import type { Loadout, CharacterState, SkinState, GearItem, RuneSlot, RuneItem, GearRarity, RuneRarity, EnchantRarity } from '../types';
+import type { Loadout, GearItem, RuneSlot, RuneItem, GearRarity, RuneRarity, EnchantRarity } from '../types';
 
 const CURRENT_VERSION = 1;
 

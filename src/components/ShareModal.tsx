@@ -38,9 +38,9 @@ const GameCheckbox = ({ checked, label, onChange }: { checked: boolean, label: s
     className="flex items-center gap-3 group cursor-pointer active:scale-95 transition-all"
   >
     <div className="relative w-7 h-7 flex items-center justify-center pointer-events-none">
-      <img src="/assets/ui/bg_siliao_tianjia.png" alt="" className="absolute inset-0 w-full h-full object-contain" />
+      <img src={`${import.meta.env.BASE_URL}assets/ui/bg_siliao_tianjia.png`} alt="" className="absolute inset-0 w-full h-full object-contain" />
       {checked && (
-        <img src="/assets/ui/duihao.png" alt="" className="relative z-10 w-[80%] h-[80%] object-contain mb-1 ml-1 drop-shadow-sm" />
+        <img src={`${import.meta.env.BASE_URL}assets/ui/duihao.png`} alt="" className="relative z-10 w-[80%] h-[80%] object-contain mb-1 ml-1 drop-shadow-sm" />
       )}
     </div>
     <span className="text-[11px] font-black uppercase text-[#4a3424] opacity-80 tracking-wide pointer-events-none">{label}</span>
@@ -145,7 +145,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
     
     const shareData = {
       title: 'Archero 2 Build',
-      text: `Check out ${finalName} at ${window.location.href}! Import code: ${finalCode}`,
+      text: `Check out ${finalName} at ${window.location.href} ! Import code: ${finalCode}`,
     };
 
     try {
@@ -234,7 +234,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
           className="absolute -translate-x-1/2 -translate-y-1/2"
           style={{ top: `${coords.y}%`, left: `${coords.x}%`, width: isEtched ? '14.5%' : '13.5%', height: isEtched ? '18.5%' : '17.3%' }}
         >
-          {isEtched && <img src="/assets/ui/Frame_4.png" alt="" className="absolute inset-0 w-full h-full object-contain opacity-60" />}
+          {isEtched && <img src={`${import.meta.env.BASE_URL}assets/ui/Frame_4.png`} alt="" className="absolute inset-0 w-full h-full object-contain opacity-60" />}
           <RuneItem item={slot.item} enchantId={slot.enchantId} enchantRarity={slot.enchantRarity} className="w-full h-full" />
         </div>
       );
@@ -242,16 +242,16 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
     return (
       <div className="fixed top-0 left-[-9999px] pointer-events-none opacity-0 -z-50 overflow-hidden">
-        <img src="/assets/ui/Title_Boss.png" alt="" className="hidden" />
+        <img src={`${import.meta.env.BASE_URL}assets/ui/Title_Boss.png`} alt="" className="hidden" />
         <div ref={captureRef} className="flex flex-col bg-[#0a0a0c] p-6 gap-0 w-[480px] text-white">
           <div className="flex flex-col items-center gap-2 mb-6">
-            <img src="/assets/LOGO_EN.png" alt="" className="w-48 h-auto" />
+            <img src={`${import.meta.env.BASE_URL}assets/LOGO_EN.png`} alt="" className="w-48 h-auto" />
             <span className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Buildero 2 Loadout</span>
           </div>
 
           {shareGear && (
             <div className="relative aspect-[1608/1259] w-full flex items-stretch overflow-hidden rounded-t-2xl border-x border-t border-white/10 shadow-2xl">
-              <img src="/assets/ui/rank_bg_zhuxian_01.png" className="absolute inset-0 w-full h-full object-cover z-0" alt="" />
+              <img src={`${import.meta.env.BASE_URL}assets/ui/rank_bg_zhuxian_01.png`} className="absolute inset-0 w-full h-full object-cover z-0" alt="" />
               <div className="flex-[0_0_28%] flex flex-col items-center justify-around h-full z-10 py-2">
                   {leftGear.map(slot => (
                     <div key={slot.id} className="w-20 h-20">
@@ -281,7 +281,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
           {shareRunes && (
             <div className={`relative aspect-[1608/1259] w-full overflow-hidden border-x border-white/10 bg-black/40 shadow-2xl ${!shareGear ? 'rounded-t-2xl border-t' : ''} rounded-b-2xl border-b`}>
-              <img src="/assets/rune_bg.png" className="absolute inset-0 w-full h-full object-cover" alt="" />
+              <img src={`${import.meta.env.BASE_URL}assets/rune_bg.png`} className="absolute inset-0 w-full h-full object-cover" alt="" />
               {enhancementCoords.map((pos, i) => renderRuneSlot('enhancement', i, pos))}
               {abilityCoords.map((pos, i) => renderRuneSlot('ability', i, pos))}
               {blessingCoords.map((pos, i) => renderRuneSlot('blessing', i, pos))}
@@ -315,7 +315,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
   const actionButtons = (
     <div className="grid grid-cols-2 gap-3 w-full">
       <NineSliceButton
-        imageSrc="/assets/ui/Btn_Blue_S.png"
+        imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Blue_S.png`}
         onClick={handleShareSheet}
         disabled={!anyOptionChecked}
         className={`h-12 text-[10px] font-black uppercase ${!anyOptionChecked ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
@@ -327,7 +327,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
       </NineSliceButton>
       
       <NineSliceButton
-        imageSrc="/assets/ui/Btn_Yellow_S.png"
+        imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`}
         onClick={handleDownloadImage}
         disabled={isGeneratingImage || !anyOptionChecked}
         className={`h-12 text-[10px] font-black uppercase ${(!anyOptionChecked || isGeneratingImage) ? 'opacity-40 grayscale cursor-not-allowed' : ''}`}
@@ -393,7 +393,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
               />
               <div className="absolute bottom-1.5 right-1.5">
                 <NineSliceButton
-                  imageSrc={copied ? "/assets/ui/Btn_Green_S.png" : "/assets/ui/Btn_Yellow_S.png"}
+                  imageSrc={copied ? `${import.meta.env.BASE_URL}assets/ui/Btn_Green_S.png` : `${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`}
                   onClick={handleCopy}
                   disabled={!anyOptionChecked}
                   className={`h-7 px-3 text-[9px] ${!anyOptionChecked ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}

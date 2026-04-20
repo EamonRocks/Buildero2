@@ -187,7 +187,7 @@ export const Dashboard: React.FC = () => {
           ) : (
             <div className="w-full h-full flex items-center justify-center p-4">
               <img 
-                src={`/assets/ui/icon_${slot.type}.png`} 
+                src={`${import.meta.env.BASE_URL}assets/ui/icon_${slot.type}.png`} 
                 className="w-full h-full object-contain opacity-40 group-hover:opacity-70 transition-opacity" 
                 alt={slot.label} 
               />
@@ -264,7 +264,7 @@ export const Dashboard: React.FC = () => {
         >
           {isEtched && (
             <img 
-              src="/assets/ui/Frame_4.png" 
+              src={`${import.meta.env.BASE_URL}assets/ui/Frame_4.png`} 
               alt="" 
               className="absolute inset-0 w-full h-full object-contain opacity-60 pointer-events-none"
             />
@@ -316,7 +316,7 @@ export const Dashboard: React.FC = () => {
           ].map((t) => (
             <NineSliceButton
               key={t.id}
-              imageSrc={activeTab === t.id ? '/assets/ui/tab_xuanzhong_3.png' : '/assets/ui/tab_weixuanzhong_2.png'}
+              imageSrc={activeTab === t.id ? `${import.meta.env.BASE_URL}assets/ui/tab_xuanzhong_3.png` : `${import.meta.env.BASE_URL}assets/ui/tab_weixuanzhong_2.png`}
               onClick={() => setActiveTab(t.id as any)}
               // origin-bottom ensures expansion happens upwards, not into the content
               className={`w-28 h-10 text-[10px] lowercase tracking-normal border-b-0 rounded-b-none origin-bottom transition-all duration-200 ${
@@ -336,7 +336,7 @@ export const Dashboard: React.FC = () => {
           <div className="w-full h-full flex relative overflow-hidden items-stretch py-2">
             {/* Gear Background - Fills vertically, overflows horizontal */}
             <img 
-              src="/assets/ui/rank_bg_zhuxian_01.png" 
+              src={`${import.meta.env.BASE_URL}assets/ui/rank_bg_zhuxian_01.png`} 
               className="absolute inset-0 w-full h-full object-cover z-0" 
               alt="background" 
             />
@@ -365,7 +365,7 @@ export const Dashboard: React.FC = () => {
         {activeTab === 'runes' && (
           /* Runes Layout - No rounded edges */
           <div className="w-full aspect-[1608/1259] relative bg-black/20 overflow-hidden shadow-2xl border border-white/5">
-            <img src="/assets/rune_bg.png" alt="Rune Background" className="absolute inset-0 w-full h-full object-cover" />
+            <img src={`${import.meta.env.BASE_URL}assets/rune_bg.png`} alt="Rune Background" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute top-[38%] left-[50%] -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center gap-[1%]">
               <CharacterItem 
                 character={state.character} 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: __DEPLOY_URL__/sitemap.xml
+Sitemap: https://EamonRocks.github.io/Buildero2/sitemap.xml
