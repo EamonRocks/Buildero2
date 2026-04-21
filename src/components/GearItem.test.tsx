@@ -6,7 +6,8 @@ import type { GearItem as GearItemType } from '../types';
 describe('GearItem', () => {
   const mockItem: GearItemType = {
     id: 'oracle_weapon',
-    name: 'Oracle Sword',
+    sid: '00',
+    name: 'Oracle Spear',
     type: 'weapon',
     set: 'oracle',
     rarity: 'epic',
@@ -16,7 +17,7 @@ describe('GearItem', () => {
   it('renders the gear icon and frame', () => {
     render(<GearItem item={mockItem} />);
     
-    const gearIcon = screen.getByAltText(/Oracle Sword/i);
+    const gearIcon = screen.getByAltText(/Oracle Spear/i);
     expect(gearIcon).toBeInTheDocument();
     expect(gearIcon).toHaveAttribute('src', expect.stringContaining('assets/gear/oracle_weapon.png'));
 

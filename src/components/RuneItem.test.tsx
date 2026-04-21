@@ -6,6 +6,7 @@ import type { RuneItem as RuneItemType } from '../types';
 describe('RuneItem', () => {
   const mockRune: RuneItemType = {
     id: 'enhancement_dragonflight',
+    sid: '1c',
     name: 'Dragonflight',
     category: 'enhancement',
     rarity: 'rare'

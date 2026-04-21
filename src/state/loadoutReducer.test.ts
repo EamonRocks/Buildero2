@@ -12,7 +12,7 @@ describe('loadoutReducer', () => {
   });
 
   it('should set gear in a valid slot', () => {
-    const gear: GearItem = { id: 'oracle_weapon', name: 'Oracle Spear', type: 'weapon', set: 'oracle', rarity: 'epic', isSTier: true };
+    const gear: GearItem = { id: 'oracle_weapon', sid: '00', name: 'Oracle Spear', type: 'weapon', set: 'oracle', rarity: 'epic', isSTier: true };
     const action: LoadoutAction = { 
       type: 'SET_GEAR', 
       payload: { slot: 'weapon', item: gear } 
@@ -22,7 +22,7 @@ describe('loadoutReducer', () => {
   });
 
   it('should set a rune at a specific index', () => {
-    const rune: RuneItem = { id: 'enhancement_dragonflight', name: 'Dragonflight', category: 'enhancement', rarity: 'rare' };
+    const rune: RuneItem = { id: 'enhancement_dragonflight', sid: '1c', name: 'Dragonflight', category: 'enhancement', rarity: 'rare' };
     const action: LoadoutAction = { 
       type: 'SET_RUNE', 
       payload: { category: 'enhancement', index: 2, item: rune } 

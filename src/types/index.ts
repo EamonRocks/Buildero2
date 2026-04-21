@@ -1,4 +1,4 @@
-export const VERSION = '1.0.1';
+export const VERSION = '1.0.2';
 
 export type GearRarity = 
   | 'common' | 'fine' | 'rare' | 'epic' | 'epic_1' | 'epic_2' 
@@ -36,6 +36,7 @@ export interface CharacterState {
 
 export interface WeaponSkin {
   id: string;
+  sid: string;
   name: string;
   weaponId: string;
   rarity: GearRarity; // For background frame
@@ -43,6 +44,7 @@ export interface WeaponSkin {
 
 export interface GearItem {
   id: string;
+  sid: string;
   name: string;
   type: GearType;
   set: GearSet;
@@ -55,12 +57,14 @@ export interface GearItem {
 
 export interface Enchantment {
   id: string;
+  sid: string;
   name: string;
   availableRarities: EnchantRarity[];
 }
 
 export interface RuneItem {
   id: string;
+  sid: string;
   name: string;
   category: RuneCategory;
   gameplayCategory?: GameplayCategory; // For Enhancement/Ability
@@ -76,12 +80,14 @@ export interface RuneSlot {
 
 export interface Skin {
   id: string;
+  sid: string;
   name: string;
   characterId: string;
 }
 
 export interface Character {
   id: string;
+  sid: string;
   name: string;
   skins: string[]; // List of Skin IDs
 }
