@@ -1,6 +1,5 @@
 import React from 'react';
-import type { GearItem as GearItemType, GearRarity } from '../types';
-import { GEAR_RARITY_ORDER } from '../types';
+import type { GearItem as GearItemType } from '../types';
 import { WEAPON_SKIN_DATABASE } from '../data/database';
 
 interface GearItemProps {
