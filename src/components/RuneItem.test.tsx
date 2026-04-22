@@ -20,6 +20,13 @@ describe('RuneItem', () => {
     expect(images.some(img => (img as HTMLImageElement).src.includes('frame_rare'))).toBe(true);
   });
 
+  it('renders correct frame for meta-rarities', () => {
+    const metaRune: RuneItemType = { ...mockRune, rarity: 'epic2_plus' };
+    render(<RuneItem item={metaRune} />);
+    const images = screen.getAllByRole('img');
+    expect(images.some(img => (img as HTMLImageElement).src.includes('frame_epic2_plus'))).toBe(true);
+  });
+
   it('renders enchantment indicator when present', () => {
     render(<RuneItem item={mockRune} enchantId="crit_rate" enchantRarity="epic" />);
     // Enchantment indicator is a div with background color class

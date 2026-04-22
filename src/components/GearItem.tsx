@@ -20,12 +20,7 @@ export const GearItem: React.FC<GearItemProps> = ({
   onSkinClick,
   hideEmptySkins = false
 }) => {
-  const baseRarity = item.rarity === 'legendary_plus' ? 'legendary'
-    : item.rarity === 'mythic_plus' ? 'mythic'
-    : item.rarity === 'mythic_3_plus' ? 'mythic_3'
-    : item.rarity;
-
-  const frameSrc = `${import.meta.env.BASE_URL}assets/frames/gear/frame_${baseRarity}.png`;
+  const frameSrc = `${import.meta.env.BASE_URL}assets/frames/gear/frame_${item.rarity}.png`;
   const iconSrc = `${import.meta.env.BASE_URL}assets/gear/${item.id}.png`;
   const sTierSrc = `${import.meta.env.BASE_URL}assets/gear/s_tier_badge.png`;
 

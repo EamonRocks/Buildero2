@@ -37,4 +37,11 @@ describe('GearItem', () => {
     render(<GearItem item={nonSTierItem} />);
     expect(screen.queryByAltText(/S-Tier/i)).not.toBeInTheDocument();
   });
+
+  it('renders correct frame for meta-rarities', () => {
+    const metaItem: GearItemType = { ...mockItem, rarity: 'mythic_3_plus' };
+    render(<GearItem item={metaItem} />);
+    const frame = screen.getByAltText(/mythic_3_plus/i);
+    expect(frame).toHaveAttribute('src', expect.stringContaining('assets/frames/gear/frame_mythic_3_plus.png'));
+  });
 });

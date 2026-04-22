@@ -19,12 +19,10 @@ const RARITY_COLORS: Record<string, string> = {
 };
 
 export const RuneItem: React.FC<RuneItemProps> = ({ item, enchantId, enchantRarity, className = '' }) => {
-  const baseRarity = item.rarity === 'epic2_plus' ? 'epic_2' 
-    : item.rarity === 'legendary_plus' ? 'legendary'
-    : item.rarity;
-
-  const frameSrc = `${import.meta.env.BASE_URL}assets/frames/runes/${item.category}/frame_${baseRarity}.png`;
-  const iconSrc = `${import.meta.env.BASE_URL}assets/runes/rune_${item.id}.png`;
+  const frameSrc = `${import.meta.env.BASE_URL}assets/frames/runes/${item.category}/frame_${item.rarity}.png`;
+  const iconSrc = item.id.startsWith('any_')
+    ? `${import.meta.env.BASE_URL}assets/runes/rune_any.png`
+    : `${import.meta.env.BASE_URL}assets/runes/rune_${item.id}.png`;
 
   const getEnchantName = () => {
     if (!enchantId) return '';
@@ -57,17 +55,11 @@ export const RuneItem: React.FC<RuneItemProps> = ({ item, enchantId, enchantRari
       />
 
       {/* Rune Icon */}
-      {item.id.startsWith('any_') ? (
-        <div className="relative z-10 w-2/3 h-2/3 flex items-center justify-center bg-black/20 rounded-full border-2 border-white/20">
-          <span className="text-[10px] font-black text-white/60 italic leading-none uppercase">ANY</span>
-        </div>
-      ) : (
-        <img 
-          src={iconSrc} 
-          alt={item.name} 
-          className="relative z-10 w-2/3 h-2/3 object-contain"
-        />
-      )}
+      <img 
+        src={iconSrc} 
+        alt={item.name} 
+        className="relative z-10 w-2/3 h-2/3 object-contain"
+      />
 
       {/* Enchantment Bubble - Single Line */}
       {enchantRarity && (

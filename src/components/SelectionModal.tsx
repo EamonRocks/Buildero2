@@ -387,7 +387,13 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
                           <GearItemComponent item={{ ...item, rarity: selectedRarity }} className="w-full h-full scale-110" showExtras={false} /> :
                           <RuneItemComponent item={{ ...item, rarity: selectedRarity }} className="w-full h-full scale-110" />
                       ) : (
-                        <img src={`${import.meta.env.BASE_URL}assets/${type === 'gear' ? 'gear' : 'runes'}/${type === 'gear' ? '' : 'rune_'}${item.id}.png`} className="w-full h-full object-contain" />
+                        <img 
+                          src={item.id.startsWith('any_') 
+                            ? `${import.meta.env.BASE_URL}assets/runes/rune_any.png`
+                            : `${import.meta.env.BASE_URL}assets/${type === 'gear' ? 'gear' : 'runes'}/${type === 'gear' ? '' : 'rune_'}${item.id}.png`
+                          } 
+                          className="w-full h-full object-contain" 
+                        />
                       )
                     )}
                   </>
