@@ -306,6 +306,12 @@ export const RUNE_DATABASE: Record<string, Omit<RuneItem, 'rarity'>> = {
   'etched_life_surge': { id: 'etched_life_surge', sid: '3c', name: 'Life Surge', category: 'etched' },
   'etched_orbital_orb': { id: 'etched_orbital_orb', sid: '3d', name: 'Orbital Orb', category: 'etched' },
   'etched_echo_scythe': { id: 'etched_echo_scythe', sid: '3e', name: 'Echo Scythe', category: 'etched' },
+
+  // ANY Runes
+  'any_enhancement': { id: 'any_enhancement', sid: 'za', name: 'ANY Rune', category: 'enhancement' },
+  'any_ability': { id: 'any_ability', sid: 'zb', name: 'ANY Rune', category: 'ability' },
+  'any_blessing': { id: 'any_blessing', sid: 'zc', name: 'ANY Rune', category: 'blessing' },
+  'any_etched': { id: 'any_etched', sid: 'zd', name: 'ANY Rune', category: 'etched' },
 };
 
 export const WEAPON_SKIN_DATABASE: Record<string, WeaponSkin> = {

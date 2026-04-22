@@ -5,7 +5,7 @@ Buildero 2 is a specialized web application designed for **Archero 2** players t
 ## 🗺️ Roadmap
 
 - [ ] **Improve Layout:** Move and resize character and skin portraits to better fill the space in the app view and exported image.
-- [ ] **Meta-rarities:** Add frames/rarities like "M+3 or above", "Legendary or above", "Any rarity", etc.
+- [ ] **Meta-rarities:** Add frames/rarities like "M+3 or above", "Legendary or above", "Any rarity", etc. Also add an "ANY" option rune that signals that it can be whatever you want.
 - [ ] **Notes section:** Add a textbox for additional notes regarding the build.
 - [ ] **Alternatives:** Adding "alternative options to each gear, rune, character and enchant slot. So if there's some wiggle room for different options they could all be reflected in the build.
 

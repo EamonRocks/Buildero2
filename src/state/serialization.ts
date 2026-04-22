@@ -29,16 +29,17 @@ const RARITY_MAP: string[] = [
   'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2',
   'legendary', 'legendary_1', 'legendary_2', 'legendary_3',
   'mythic', 'mythic_1', 'mythic_2', 'mythic_3', 'mythic_4',
-  'chaotic'
+  'chaotic', 'legendary_plus', 'mythic_plus', 'mythic_3_plus', 'epic2_plus'
 ];
+
 
 const rarityToChar = (rarity: string): string => {
   const idx = RARITY_MAP.indexOf(rarity);
-  return (idx === -1 ? 0 : idx).toString(16);
+  return (idx === -1 ? 0 : idx).toString(36);
 };
 
 const charToRarity = (char: string): string => {
-  const idx = parseInt(char, 16);
+  const idx = parseInt(char, 36);
   return RARITY_MAP[idx] || 'common';
 };
 

@@ -1,4 +1,5 @@
 import type { Loadout, GearItem, RuneItem, RuneCategory, CharacterState, SkinState, EnchantRarity } from '../types';
+import { RUNE_RARITY_ORDER, MIN_ENCHANT_RARITY } from '../types';
 import { COMMON_ENCHANTS, CATEGORY_ENCHANTS } from '../data/database';
 
 export type LoadoutAction =
@@ -34,9 +35,6 @@ export const initialState: Loadout = {
     etched: new Array(3).fill(null).map(() => ({})),
   },
 };
-
-const RUNE_RARITY_ORDER = ['common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2', 'legendary', 'legendary_1', 'legendary_2', 'legendary_3', 'mythic'];
-const MIN_ENCHANT_RARITY = 'epic_2';
 
 export function loadoutReducer(state: Loadout, action: LoadoutAction): Loadout {
   switch (action.type) {

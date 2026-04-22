@@ -1,5 +1,6 @@
 import React from 'react';
 import type { GearItem as GearItemType, GearRarity } from '../types';
+import { GEAR_RARITY_ORDER } from '../types';
 import { WEAPON_SKIN_DATABASE } from '../data/database';
 
 interface GearItemProps {
@@ -11,12 +12,6 @@ interface GearItemProps {
   hideEmptySkins?: boolean;
 }
 
-const RARITY_ORDER: GearRarity[] = [
-  'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2', 
-  'legendary', 'legendary_1', 'legendary_2', 'legendary_3', 
-  'mythic', 'mythic_1', 'mythic_2', 'mythic_3', 'mythic_4', 'chaotic'
-];
-
 export const GearItem: React.FC<GearItemProps> = ({ 
   item, 
   className = '', 
@@ -25,11 +20,17 @@ export const GearItem: React.FC<GearItemProps> = ({
   onSkinClick,
   hideEmptySkins = false
 }) => {
-  const frameSrc = `${import.meta.env.BASE_URL}assets/frames/gear/frame_${item.rarity}.png`;
+  const baseRarity = item.rarity === 'legendary_plus' ? 'legendary'
+    : item.rarity === 'mythic_plus' ? 'mythic'
+    : item.rarity === 'mythic_3_plus' ? 'mythic_3'
+    : item.rarity;
+
+  const frameSrc = `${import.meta.env.BASE_URL}assets/frames/gear/frame_${baseRarity}.png`;
   const iconSrc = `${import.meta.env.BASE_URL}assets/gear/${item.id}.png`;
   const sTierSrc = `${import.meta.env.BASE_URL}assets/gear/s_tier_badge.png`;
 
-  const canGodforge = RARITY_ORDER.indexOf(item.rarity) >= RARITY_ORDER.indexOf('mythic_3');
+  const godforgeableRarities = ['mythic_3', 'mythic_4', 'chaotic', 'mythic_3_plus'];
+  const canGodforge = godforgeableRarities.includes(item.rarity);
 
   return (
     <div className={`relative w-24 h-24 flex items-center justify-center ${className}`}>

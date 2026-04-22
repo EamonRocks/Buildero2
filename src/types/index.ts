@@ -4,12 +4,40 @@ export type GearRarity =
   | 'common' | 'fine' | 'rare' | 'epic' | 'epic_1' | 'epic_2' 
   | 'legendary' | 'legendary_1' | 'legendary_2' | 'legendary_3' 
   | 'mythic' | 'mythic_1' | 'mythic_2' | 'mythic_3' | 'mythic_4' 
-  | 'chaotic';
+  | 'chaotic' | 'legendary_plus' | 'mythic_plus' | 'mythic_3_plus';
 
 export type RuneRarity = 
   | 'common' | 'fine' | 'rare' | 'epic' | 'epic_1' | 'epic_2' 
   | 'legendary' | 'legendary_1' | 'legendary_2' | 'legendary_3' 
-  | 'mythic';
+  | 'mythic' | 'epic2_plus' | 'legendary_plus';
+
+export const GEAR_BASE_RARITIES: GearRarity[] = [
+  'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2', 
+  'legendary', 'legendary_1', 'legendary_2', 'legendary_3', 
+  'mythic', 'mythic_1', 'mythic_2', 'mythic_3', 'mythic_4', 'chaotic'
+];
+
+export const GEAR_META_RARITIES: GearRarity[] = [
+  'legendary_plus', 'mythic_plus', 'mythic_3_plus'
+];
+
+export const GEAR_RARITY_ORDER: GearRarity[] = [...GEAR_BASE_RARITIES, ...GEAR_META_RARITIES];
+
+export const RUNE_BASE_RARITIES: RuneRarity[] = [
+  'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2', 
+  'legendary', 'legendary_1', 'legendary_2', 'legendary_3', 'mythic'
+];
+
+export const RUNE_META_RARITIES: RuneRarity[] = [
+  'epic2_plus', 'legendary_plus'
+];
+
+export const RUNE_RARITY_ORDER: RuneRarity[] = [
+  'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2', 'epic2_plus',
+  'legendary', 'legendary_1', 'legendary_2', 'legendary_3', 'legendary_plus', 'mythic'
+];
+
+export const MIN_ENCHANT_RARITY: RuneRarity = 'epic_2';
 
 export type EnchantRarity = 'common' | 'fine' | 'rare' | 'epic' | 'legendary' | 'mythic';
 

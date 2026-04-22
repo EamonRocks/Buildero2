@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GEAR_DATABASE, RUNE_DATABASE, CHARACTER_DATABASE, SKIN_DATABASE, WEAPON_SKIN_DATABASE } from '../data/database';
 import { useLoadout } from '../state/LoadoutContext';
+import { GEAR_META_RARITIES, RUNE_META_RARITIES, GEAR_RARITY_ORDER } from '../types';
 import type { GearRarity, RuneRarity, GearType, RuneCategory, Loadout, Enchantment, EnchantRarity, WeaponSkin } from '../types';
 import { GearItem as GearItemComponent } from './GearItem';
 import { RuneItem as RuneItemComponent } from './RuneItem';
@@ -23,50 +24,49 @@ interface SelectionModalProps {
 }
 
 const GEAR_RARITIES: GearRarity[] = [
-  'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2', 
-  'legendary', 'legendary_1', 'legendary_2', 'legendary_3', 
+  'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2',
+  'legendary', 'legendary_1', 'legendary_2', 'legendary_3',
   'mythic', 'mythic_1', 'mythic_2', 'mythic_3', 'mythic_4', 'chaotic'
 ];
 
 const RUNE_RARITIES: RuneRarity[] = [
-  'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2', 
+  'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2',
   'legendary', 'legendary_1', 'legendary_2', 'legendary_3', 'mythic'
 ];
 
 const ADVANCED_RUNE_RARITIES: RuneRarity[] = [
-  'rare', 'epic', 'epic_1', 'epic_2', 
+  'rare', 'epic', 'epic_1', 'epic_2',
   'legendary', 'legendary_1', 'legendary_2', 'legendary_3', 'mythic'
 ];
 
 const ENCHANT_RARITIES: EnchantRarity[] = ['common', 'fine', 'rare', 'epic', 'legendary', 'mythic'];
 
-const RARITY_TINTS: Record<string, string> = {
-  common: 'rgba(161, 161, 170, 0.4)',
-  fine: 'rgba(34, 197, 94, 0.4)',
-  rare: 'rgba(59, 130, 246, 0.4)',
-  epic: 'rgba(168, 85, 247, 0.4)',
-  legendary: 'rgba(234, 179, 8, 0.4)',
-  mythic: 'rgba(239, 68, 68, 0.4)',
-  chaotic: 'rgba(247, 91, 195, 0.4)',
+const RARITY_GRADIENTS: Record<string, string> = {
+  common: 'linear-gradient(135deg, #a1a1aa 0%, #71717a 100%)',
+  fine: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)',
+  rare: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+  epic: 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)',
+  epic_1: 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)',
+  epic_2: 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)',
+  legendary: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
+  legendary_1: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
+  legendary_2: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
+  legendary_3: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
+  mythic: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+  mythic_1: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+  mythic_2: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+  mythic_3: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+  mythic_4: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+  chaotic: 'linear-gradient(135deg, #f472b6 0%, #db2777 100%)',
+  // Meta
+  legendary_plus: 'linear-gradient(135deg, #eab308 33.33%, #ef4444 33.33% 66.66%, #f472b6 66.66%)',
+  mythic_plus: 'linear-gradient(135deg, #f87171 0%, #991b1b 100%)',
+  mythic_3_plus: 'linear-gradient(135deg, #f87171 0%, #7f1d1d 100%)',
+  epic2_plus: 'linear-gradient(135deg, #a855f7 25%, #eab308 25% 50%, #ef4444 50% 75%, #f472b6 75%)',
 };
 
-const getRarityColor = (r: string) => {
-  const base = r.split('_')[0];
-  return RARITY_TINTS[base] || 'rgba(255, 255, 255, 0.05)';
-};
-
-const StarIcon = ({ filled, hovered }: { filled: boolean; hovered: boolean; isBreakpoint: boolean }) => (
-  <div className={`w-full h-full relative ${hovered ? "scale-110" : ""} transition-transform`}>
-    <img 
-      src={filled || hovered ? `${import.meta.env.BASE_URL}assets/ui/Star_Full.png` : `${import.meta.env.BASE_URL}assets/ui/Star_Empty.png`} 
-      alt="" 
-      className="w-full h-full object-contain"
-    />
-  </div>
-);
-
-export const SelectionModal: React.FC<SelectionModalProps> = ({ 
-  isOpen, onClose, type, gearType, runeCategory, runeIndex, resonanceIndex, skinIndex, targetId, enchantPool, onSelect 
+export const SelectionModal: React.FC<SelectionModalProps> = ({
+  isOpen, onClose, type, gearType, runeCategory, runeIndex, resonanceIndex, skinIndex, targetId, enchantPool, onSelect
 }) => {
   const { state } = useLoadout();
   const [selectedRarity, setSelectedRarity] = useState<any>(null);
@@ -119,6 +119,11 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
   if (!isOpen) return null;
 
   const formatRarityLabel = (r: string) => {
+    if (r === 'legendary_plus') return '>= LEGENDARY';
+    if (r === 'mythic_plus') return '>= MYTHIC';
+    if (r === 'mythic_3_plus') return '>= MYTHIC+3';
+    if (r === 'epic2_plus') return '>= EPIC+2';
+
     if (r.includes('_')) {
       const [base, num] = r.split('_');
       return `${base.charAt(0).toUpperCase()}+${num}`;
@@ -140,9 +145,10 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const isItemDisabled = (item: any) => {
     if (type === 'rune' && runeCategory) {
+      if (item.id.startsWith('any_')) return false; // ANY runes can be duplicates
       const categoryRunes = state.runes[runeCategory];
       return categoryRunes.some((slot, idx) => {
-        if (idx === runeIndex) return false; 
+        if (idx === runeIndex) return false;
         return slot.item?.id === item.id;
       });
     }
@@ -154,7 +160,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
           return s.id === item.id;
         });
       } else {
-        const activeSkins = resonanceIndex !== undefined 
+        const activeSkins = resonanceIndex !== undefined
           ? state.resonances[resonanceIndex]?.activeSkins || []
           : state.character.activeSkins;
         return activeSkins.some((s, idx) => {
@@ -173,12 +179,16 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const isRarityValid = (item: any, rarity: string) => {
     if (!item || !rarity) return true;
-    
+
     if (type === 'gear') {
       const isSTier = item.isSTier;
-      const rarityIndex = GEAR_RARITIES.indexOf(rarity as GearRarity);
-      const epicIndex = GEAR_RARITIES.indexOf('epic');
-      const leg3Index = GEAR_RARITIES.indexOf('legendary_3');
+      const isMetaRarity = GEAR_META_RARITIES.includes(rarity as any);
+
+      if (isMetaRarity && !isSTier) return false;
+
+      const rarityIndex = GEAR_RARITY_ORDER.indexOf(rarity as GearRarity);
+      const epicIndex = GEAR_RARITY_ORDER.indexOf('epic');
+      const leg3Index = GEAR_RARITY_ORDER.indexOf('legendary_3');
       if (isSTier && rarityIndex < epicIndex) return false;
       if (!isSTier && rarityIndex > leg3Index) return false;
     }
@@ -192,7 +202,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const renderStarSelector = () => {
     if (type === 'skin') return null; // No stars for skins
-    
+
     const maxStars = 8;
     return (
       <ModalSubsection title="Progression" className="p-1">
@@ -201,9 +211,9 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
             onClick={() => setSelectedStars(0)}
             className="w-7 h-7 flex items-center justify-center active:scale-90 transition-transform"
           >
-            <img 
-              src={`${import.meta.env.BASE_URL}assets/ui/btn_close_dark.png`} 
-              alt="Clear" 
+            <img
+              src={`${import.meta.env.BASE_URL}assets/ui/btn_close_dark.png`}
+              alt="Clear"
               className="w-full h-full object-contain"
             />
           </button>
@@ -213,8 +223,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
               const starNum = i + 1;
               const isFilled = starNum <= selectedStars;
               const isHovered = hoveredStar !== null && starNum <= hoveredStar;
-              const isBreakpoint = starNum === 3 || starNum === 6;
-              
+
               return (
                 <button
                   key={i}
@@ -222,7 +231,13 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
                   onClick={() => setSelectedStars(starNum)}
                   className="w-5.5 h-5.5 transition-transform active:scale-90"
                 >
-                  <StarIcon filled={isFilled} hovered={isHovered} isBreakpoint={isBreakpoint} />
+                  <div className={`w-full h-full relative ${isHovered ? "scale-110" : ""} transition-transform`}>
+                    <img
+                      src={isFilled || isHovered ? `${import.meta.env.BASE_URL}assets/ui/Star_Full.png` : `${import.meta.env.BASE_URL}assets/ui/Star_Empty.png`}
+                      alt=""
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                 </button>
               );
             })}
@@ -238,42 +253,65 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const renderRaritySelector = () => {
     let rarities: string[] = [];
-    if (type === 'gear') rarities = GEAR_RARITIES;
+    let metaRarities: string[] = [];
+
+    if (type === 'gear') {
+      rarities = GEAR_RARITIES;
+      metaRarities = GEAR_META_RARITIES;
+    }
     else if (type === 'rune') {
       rarities = (runeCategory === 'blessing' || runeCategory === 'etched') ? ADVANCED_RUNE_RARITIES : RUNE_RARITIES;
+      metaRarities = RUNE_META_RARITIES;
     } else if (type === 'enchant') {
       rarities = selectedItem?.availableRarities || ENCHANT_RARITIES;
     }
 
-    if (rarities.length === 0) return null;
+    if (rarities.length === 0 && metaRarities.length === 0) return null;
+
+    const renderRarityButton = (r: string) => {
+      const isValid = isRarityValid(selectedItem, r);
+      const gradient = RARITY_GRADIENTS[r];
+      const isSelected = selectedRarity === r;
+
+      return (
+        <button
+          key={r}
+          onClick={() => setSelectedRarity(r)}
+          disabled={!isValid}
+          style={{
+            backgroundImage: isValid ? gradient : 'none',
+            backgroundColor: isValid ? 'transparent' : 'rgba(0,0,0,0.1)',
+            opacity: isValid ? (isSelected ? 1 : 0.6) : 0.2
+          }}
+          className={`px-1.5 py-0.5 rounded border-2 text-[8px] font-black uppercase transition-all shadow-sm ${isSelected
+            ? 'border-[#4a3424] scale-105'
+            : isValid ? 'border-[#4a3424]/20 hover:border-[#4a3424]/40' : 'border-transparent text-black/20 cursor-not-allowed'
+            }`}
+        >
+          <span className="text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+            {formatRarityLabel(r)}
+          </span>
+        </button>
+      );
+    };
 
     return (
       <ModalSubsection title="Quality" className="p-1">
-        <div className="flex flex-wrap gap-0.5 justify-center">
-          {rarities.map((r) => {
-            const isValid = isRarityValid(selectedItem, r);
-            const tint = getRarityColor(r);
-            const isSelected = selectedRarity === r;
-            
-            return (
-              <button
-                key={r}
-                onClick={() => setSelectedRarity(r)}
-                disabled={!isValid}
-                style={{ 
-                  backgroundColor: isValid ? tint : 'rgba(0,0,0,0.1)',
-                  opacity: isValid ? (isSelected ? 1 : 0.6) : 0.2
-                }}
-                className={`px-1.5 py-0.5 rounded border-2 text-[8px] font-black uppercase transition-all ${
-                  isSelected 
-                    ? 'border-[#4a3424] text-[#4a3424]' 
-                    : isValid ? 'border-[#4a3424]/20 text-[#4a3424]/80 hover:border-[#4a3424]/40' : 'border-transparent text-black/20 cursor-not-allowed'
-                }`}
-              >
-                {formatRarityLabel(r)}
-              </button>
-            );
-          })}
+        <div className="flex flex-col gap-2">
+          {/* Regular Rarities */}
+          <div className="flex flex-wrap gap-1 justify-center items-center">
+            {rarities.map(renderRarityButton)}
+          </div>
+
+          {/* Meta Rarities */}
+          {metaRarities.length > 0 && (
+            <>
+              <div className="h-[1px] w-3/4 bg-[#4a3424]/10 mx-auto" />
+              <div className="flex flex-wrap gap-2 justify-center items-center">
+                {metaRarities.map(renderRarityButton)}
+              </div>
+            </>
+          )}
         </div>
       </ModalSubsection>
     );
@@ -318,51 +356,49 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
                   }
                 }}
                 disabled={!isEnabled}
-                className={`rounded-lg border-2 transition-all p-0.5 flex items-center relative ${
-                  type === 'enchant' ? 'justify-start px-2 py-1' : 'aspect-square justify-center'
-                } ${
-                  selectedItem?.id === item.id 
-                    ? 'border-[#4a3424] bg-[#4a3424]/10 shadow-inner' 
-                    : isEnabled 
-                      ? (type === 'rune' ? 'border-transparent bg-black/40 hover:border-[#4a3424]/20' : 'border-transparent bg-black/5 hover:border-[#4a3424]/20') 
+                className={`rounded-lg border-2 transition-all p-0.5 flex items-center relative ${type === 'enchant' ? 'justify-start px-2 py-1' : 'aspect-square justify-center'
+                  } ${selectedItem?.id === item.id
+                    ? 'border-[#4a3424] bg-[#4a3424]/10 shadow-inner'
+                    : isEnabled
+                      ? (type === 'rune' ? 'border-transparent bg-black/40 hover:border-[#4a3424]/20' : 'border-transparent bg-black/5 hover:border-[#4a3424]/20')
                       : 'opacity-10 grayscale cursor-not-allowed'
-                }`}
+                  }`}
               >
-                 {type === 'enchant' ? (
-                   <span className="text-xs font-bold text-[#4a3424]">{item.name}</span>
-                 ) : (
-                   <>
-                     {type === 'character' || type === 'resonance' ? (
-                        <img src={`${import.meta.env.BASE_URL}assets/characters/character_${item.id}.png`} className="w-full h-full object-cover rounded-lg" />
-                     ) : type === 'skin' ? (
-                        <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden rounded-md">
-                          {targetId === 'weapon' ? (
-                             <>
-                               <img src={`${import.meta.env.BASE_URL}assets/frames/gear/frame_${(item as WeaponSkin).rarity}.png`} className="absolute inset-0 w-full h-full object-cover" />
-                               <img src={`${import.meta.env.BASE_URL}assets/gear/skin_${state.gear.weapon?.set}_${item.id}.png`} className="relative z-10 w-full h-full object-cover" />
-                             </>
-                          ) : (
-                             <img src={`${import.meta.env.BASE_URL}assets/characters/skin_${item.characterId}_${item.id}.png`} className="w-full h-full object-cover" />
-                          )}
-                        </div>
-                     ) : (
-                        selectedRarity && isRarityMatch ? (
-                          type === 'gear' ? 
-                            <GearItemComponent item={{...item, rarity: selectedRarity}} className="w-full h-full scale-110" showExtras={false} /> :
-                            <RuneItemComponent item={{...item, rarity: selectedRarity}} className="w-full h-full scale-110" />
+                {type === 'enchant' ? (
+                  <span className="text-xs font-bold text-[#4a3424]">{item.name}</span>
+                ) : (
+                  <>
+                    {type === 'character' || type === 'resonance' ? (
+                      <img src={`${import.meta.env.BASE_URL}assets/characters/character_${item.id}.png`} className="w-full h-full object-cover rounded-lg" />
+                    ) : type === 'skin' ? (
+                      <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden rounded-md">
+                        {targetId === 'weapon' ? (
+                          <>
+                            <img src={`${import.meta.env.BASE_URL}assets/frames/gear/frame_${(item as WeaponSkin).rarity}.png`} className="absolute inset-0 w-full h-full object-cover" />
+                            <img src={`${import.meta.env.BASE_URL}assets/gear/skin_${state.gear.weapon?.set}_${item.id}.png`} className="relative z-10 w-full h-full object-cover" />
+                          </>
                         ) : (
-                          <img src={`${import.meta.env.BASE_URL}assets/${type === 'gear' ? 'gear' : 'runes'}/${type === 'gear' ? '' : 'rune_'}${item.id}.png`} className="w-full h-full object-contain" />
-                        )
-                     )}
-                   </>
-                 )}
-                 {isDisabled && (
+                          <img src={`${import.meta.env.BASE_URL}assets/characters/skin_${item.characterId}_${item.id}.png`} className="relative z-10 w-full h-full object-cover" />
+                        )}
+                      </div>
+                    ) : (
+                      selectedRarity && isRarityMatch ? (
+                        type === 'gear' ?
+                          <GearItemComponent item={{ ...item, rarity: selectedRarity }} className="w-full h-full scale-110" showExtras={false} /> :
+                          <RuneItemComponent item={{ ...item, rarity: selectedRarity }} className="w-full h-full scale-110" />
+                      ) : (
+                        <img src={`${import.meta.env.BASE_URL}assets/${type === 'gear' ? 'gear' : 'runes'}/${type === 'gear' ? '' : 'rune_'}${item.id}.png`} className="w-full h-full object-contain" />
+                      )
+                    )}
+                  </>
+                )}
+                {isDisabled && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg pointer-events-none">
                     <span className="text-[6px] font-black uppercase tracking-tighter text-white bg-red-600/80 px-1 rounded-sm">
                       {type === 'resonance' ? 'Occupied' : 'Used'}
                     </span>
                   </div>
-                 )}
+                )}
               </button>
             );
           })}
@@ -394,9 +430,9 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
   );
 
   return (
-    <ModalPopup 
-      isOpen={isOpen} 
-      onClose={onClose} 
+    <ModalPopup
+      isOpen={isOpen}
+      onClose={onClose}
       title={`Select ${type}`}
       actions={actions}
     >
