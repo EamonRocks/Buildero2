@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { GEAR_DATABASE, RUNE_DATABASE, CHARACTER_DATABASE, SKIN_DATABASE, WEAPON_SKIN_DATABASE } from '../data/database';
 import { useLoadout } from '../state/LoadoutContext';
-import { GEAR_META_RARITIES, RUNE_META_RARITIES, GEAR_RARITY_ORDER } from '../types';
-import type { GearRarity, RuneRarity, GearType, RuneCategory, Loadout, Enchantment, EnchantRarity, WeaponSkin } from '../types';
+import { GEAR_META_RARITIES, RUNE_META_RARITIES, RUNE_RARITY_ORDER, GEAR_RARITY_ORDER } from '../types';
+import type { GearRarity, RuneRarity, GearType, RuneCategory, Loadout, Enchantment, EnchantRarity, WeaponSkin, Character, GearItem as GearItemType, RuneItem as RuneItemType, Skin } from '../types';
 import { GearItem as GearItemComponent } from './GearItem';
 import { RuneItem as RuneItemComponent } from './RuneItem';
 import ModalPopup from './ModalPopup';
@@ -20,7 +20,7 @@ interface SelectionModalProps {
   resonanceIndex?: number;
   enchantPool?: Enchantment[];
   skinIndex?: number;
-  onSelect: (item: any, rarity?: any, stars?: number) => void;
+  onSelect: (item: Character | GearItemType | RuneItemType | Enchantment | Skin | WeaponSkin | null, rarity?: GearRarity | RuneRarity | EnchantRarity | null, stars?: number) => void;
 }
 
 const GEAR_RARITIES: GearRarity[] = [
@@ -69,8 +69,8 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
   isOpen, onClose, type, gearType, runeCategory, runeIndex, resonanceIndex, skinIndex, targetId, enchantPool, onSelect
 }) => {
   const { state } = useLoadout();
-  const [selectedRarity, setSelectedRarity] = useState<any>(null);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [selectedRarity, setSelectedRarity] = useState<GearRarity | RuneRarity | EnchantRarity | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Character | GearItemType | RuneItemType | Enchantment | Skin | WeaponSkin | null>(null);
   const [selectedStars, setSelectedStars] = useState<number>(0);
   const [hoveredStar, setHoveredStars] = useState<number | null>(null);
 
@@ -100,11 +100,11 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
         setSelectedRarity(null);
       } else if (type === 'gear') {
         const currentGear = state.gear[targetId as keyof Loadout['gear']];
-        setSelectedItem(currentGear ? GEAR_DATABASE[currentGear.id] : null);
+        setSelectedItem(currentGear ? GEAR_DATABASE[currentGear.id] as GearItemType : null);
         setSelectedRarity(currentGear?.rarity || null);
       } else if (type === 'rune' && runeCategory && runeIndex !== undefined) {
         const currentRune = state.runes[runeCategory][runeIndex];
-        setSelectedItem(currentRune?.item ? RUNE_DATABASE[currentRune.item.id] : null);
+        setSelectedItem(currentRune?.item ? RUNE_DATABASE[currentRune.item.id] as RuneItemType : null);
         setSelectedRarity(currentRune?.item?.rarity || null);
       } else if (type === 'enchant') {
         const currentRune = state.runes[runeCategory!][runeIndex!];
@@ -143,13 +143,25 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
     onSelect(null, null, 0);
   };
 
-  const isItemDisabled = (item: any) => {
+  const isItemDisabled = (item: Character | GearItemType | RuneItemType | Enchantment | Skin | WeaponSkin) => {
     if (type === 'rune' && runeCategory) {
       if (item.id.startsWith('any_')) return false; // ANY runes can be duplicates
       const categoryRunes = state.runes[runeCategory];
       return categoryRunes.some((slot, idx) => {
         if (idx === runeIndex) return false;
-        return slot.item?.id === item.id;
+        
+        // Exact match
+        if (slot.item?.id === item.id) return true;
+
+        // Twin Rune Exclusion:
+        // 1. If 'item' is a twin rune, disable if any of its sources are equipped.
+        const runeItem = item as RuneItemType;
+        if (runeItem.isTwin && (slot.item?.id === runeItem.twinSource1 || slot.item?.id === runeItem.twinSource2)) return true;
+
+        // 2. If the equipped rune is a twin rune, disable if 'item' is one of its sources.
+        if (slot.item?.isTwin && (item.id === slot.item.twinSource1 || item.id === slot.item.twinSource2)) return true;
+
+        return false;
       });
     }
     if (type === 'skin') {
@@ -177,12 +189,12 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
     return false;
   };
 
-  const isRarityValid = (item: any, rarity: string) => {
+  const isRarityValid = (item: Character | GearItemType | RuneItemType | Enchantment | Skin | WeaponSkin | null, rarity: string) => {
     if (!item || !rarity) return true;
 
     if (type === 'gear') {
-      const isSTier = item.isSTier;
-      const isMetaRarity = GEAR_META_RARITIES.includes(rarity as any);
+      const isSTier = (item as GearItemType).isSTier;
+      const isMetaRarity = GEAR_META_RARITIES.includes(rarity as GearRarity);
 
       if (isMetaRarity && !isSTier) return false;
 
@@ -193,8 +205,17 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
       if (!isSTier && rarityIndex > leg3Index) return false;
     }
 
+    if (type === 'rune') {
+      const runeItem = item as RuneItemType;
+      if (runeItem?.isTwin) {
+        const rarityIndex = RUNE_RARITY_ORDER.indexOf(rarity as RuneRarity);
+        const minIndex = RUNE_RARITY_ORDER.indexOf('legendary_2');
+        if (rarityIndex < minIndex) return false;
+      }
+    }
+
     if (type === 'enchant') {
-      return item.availableRarities?.includes(rarity) ?? false;
+      return (item as Enchantment).availableRarities?.includes(rarity as EnchantRarity) ?? false;
     }
 
     return true;
@@ -256,14 +277,14 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
     let metaRarities: string[] = [];
 
     if (type === 'gear') {
-      rarities = GEAR_RARITIES;
-      metaRarities = GEAR_META_RARITIES;
+      rarities = GEAR_RARITIES as string[];
+      metaRarities = GEAR_META_RARITIES as string[];
     }
     else if (type === 'rune') {
-      rarities = (runeCategory === 'blessing' || runeCategory === 'etched') ? ADVANCED_RUNE_RARITIES : RUNE_RARITIES;
-      metaRarities = RUNE_META_RARITIES;
+      rarities = (runeCategory === 'blessing' || runeCategory === 'etched') ? ADVANCED_RUNE_RARITIES as string[] : RUNE_RARITIES as string[];
+      metaRarities = RUNE_META_RARITIES as string[];
     } else if (type === 'enchant') {
-      rarities = selectedItem?.availableRarities || ENCHANT_RARITIES;
+      rarities = (selectedItem as Enchantment)?.availableRarities || ENCHANT_RARITIES;
     }
 
     if (rarities.length === 0 && metaRarities.length === 0) return null;
@@ -276,7 +297,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
       return (
         <button
           key={r}
-          onClick={() => setSelectedRarity(r)}
+          onClick={() => setSelectedRarity(r as any)}
           disabled={!isValid}
           style={{
             backgroundImage: isValid ? gradient : 'none',
@@ -318,7 +339,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
   };
 
   const renderItemSelector = () => {
-    let items: any[] = [];
+    let items: (Character | GearItemType | RuneItemType | Enchantment | Skin | WeaponSkin)[] = [];
     if (type === 'character' || type === 'resonance' || type === 'skin') {
       if (type === 'skin') {
         if (targetId === 'weapon') {
@@ -332,8 +353,8 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
         items = Object.values(CHARACTER_DATABASE);
       }
     }
-    if (type === 'gear') items = Object.values(GEAR_DATABASE).filter(i => i.type === gearType);
-    if (type === 'rune') items = Object.values(RUNE_DATABASE).filter(i => i.category === runeCategory);
+    if (type === 'gear') items = Object.values(GEAR_DATABASE).filter(i => i.type === gearType) as GearItemType[];
+    if (type === 'rune') items = Object.values(RUNE_DATABASE).filter(i => i.category === runeCategory) as RuneItemType[];
     if (type === 'enchant') items = enchantPool || [];
 
     const isGearType = type === 'gear';
@@ -343,7 +364,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
         <div className={type === 'enchant' ? "flex flex-col gap-0.5" : `grid ${isGearType ? 'grid-cols-3' : 'grid-cols-4'} gap-1`}>
           {items.map((item) => {
             const isDisabled = isItemDisabled(item);
-            const isRarityMatch = selectedRarity ? isRarityValid(item, selectedRarity) : true;
+            const isRarityMatch = selectedRarity ? isRarityValid(item, selectedRarity as string) : true;
             const isEnabled = !isDisabled && isRarityMatch;
 
             return (
@@ -351,7 +372,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
                 key={item.id}
                 onClick={() => {
                   setSelectedItem(item);
-                  if (selectedRarity && !isRarityValid(item, selectedRarity)) {
+                  if (selectedRarity && !isRarityValid(item, selectedRarity as string)) {
                     setSelectedRarity(null);
                   }
                 }}
@@ -378,22 +399,27 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
                             <img src={`${import.meta.env.BASE_URL}assets/gear/skin_${state.gear.weapon?.set}_${item.id}.png`} className="relative z-10 w-full h-full object-cover" />
                           </>
                         ) : (
-                          <img src={`${import.meta.env.BASE_URL}assets/characters/skin_${item.characterId}_${item.id}.png`} className="relative z-10 w-full h-full object-cover" />
+                          <img src={`${import.meta.env.BASE_URL}assets/characters/skin_${(item as Skin).characterId}_${item.id}.png`} className="relative z-10 w-full h-full object-cover" />
                         )}
                       </div>
                     ) : (
-                      selectedRarity && isRarityMatch ? (
+                      (selectedRarity && isRarityMatch) ? (
                         type === 'gear' ?
-                          <GearItemComponent item={{ ...item, rarity: selectedRarity }} className="w-full h-full scale-110" showExtras={false} /> :
-                          <RuneItemComponent item={{ ...item, rarity: selectedRarity }} className="w-full h-full scale-110" />
+                          <GearItemComponent item={{ ...item as GearItemType, rarity: selectedRarity as GearRarity }} className="w-full h-full scale-110" showExtras={false} /> :
+                          <RuneItemComponent item={{ ...item as RuneItemType, rarity: selectedRarity as RuneRarity }} className="w-full h-full scale-110" />
                       ) : (
-                        <img 
-                          src={item.id.startsWith('any_') 
-                            ? `${import.meta.env.BASE_URL}assets/runes/rune_any.png`
-                            : `${import.meta.env.BASE_URL}assets/${type === 'gear' ? 'gear' : 'runes'}/${type === 'gear' ? '' : 'rune_'}${item.id}.png`
-                          } 
-                          className="w-full h-full object-contain" 
-                        />
+                        type === 'rune' && (item as RuneItemType).isTwin ? (
+                          /* For twin runes with no rarity selected, show icons only with no frame */
+                          <RuneItemComponent item={{ ...item as RuneItemType, rarity: 'common' }} hideFrame={true} className="w-full h-full" />
+                        ) : (
+                          <img 
+                            src={item.id.startsWith('any_') 
+                              ? `${import.meta.env.BASE_URL}assets/runes/rune_any.png`
+                              : `${import.meta.env.BASE_URL}assets/${type === 'gear' ? 'gear' : 'runes'}/${type === 'gear' ? '' : 'rune_'}${item.id}.png`
+                            } 
+                            className="w-full h-full object-contain" 
+                          />
+                        )
                       )
                     )}
                   </>
@@ -415,7 +441,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
 
   const actions = (
     <>
-      {(type === 'gear' || type === 'rune' || type === 'enchant' || type === 'resonance' || type === 'skin') && (
+      {(type === 'gear' || type === 'rune' || type === 'enchant' || resonanceIndex !== undefined || skinIndex !== undefined) && (
         <NineSliceButton
           imageSrc={`${import.meta.env.BASE_URL}assets/ui/Btn_Red_S.png`}
           onClick={handleClear}
@@ -425,9 +451,9 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
         </NineSliceButton>
       )}
       <NineSliceButton
-        imageSrc={(!selectedItem || (type !== 'character' && type !== 'resonance' && type !== 'skin' && !selectedRarity)) ? `${import.meta.env.BASE_URL}assets/ui/Btn_Gray_S.png` : `${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`}
+        imageSrc={(!selectedItem || (type !== 'character' && resonanceIndex === undefined && skinIndex === undefined && !selectedRarity)) ? `${import.meta.env.BASE_URL}assets/ui/Btn_Gray_S.png` : `${import.meta.env.BASE_URL}assets/ui/Btn_Yellow_S.png`}
         onClick={handleConfirm}
-        disabled={!selectedItem || (type !== 'character' && type !== 'resonance' && type !== 'skin' && !selectedRarity)}
+        disabled={!selectedItem || (type !== 'character' && resonanceIndex === undefined && skinIndex === undefined && !selectedRarity)}
         className="flex-1 h-11 text-xs"
       >
         Confirm
@@ -443,7 +469,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
       actions={actions}
     >
       <div className="flex flex-col gap-0.5 p-0">
-        {(type === 'character' || type === 'resonance' || type === 'skin') && renderStarSelector()}
+        {(type === 'character' || resonanceIndex !== undefined || skinIndex !== undefined) && renderStarSelector()}
         {renderRaritySelector()}
         {renderItemSelector()}
       </div>

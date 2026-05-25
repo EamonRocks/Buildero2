@@ -7,7 +7,7 @@ import { SelectionModal } from './SelectionModal';
 import { NineSliceButton } from './NineSliceButton';
 import { COMMON_ENCHANTS, CATEGORY_ENCHANTS } from '../data/database';
 import { RUNE_RARITY_ORDER, MIN_ENCHANT_RARITY } from '../types';
-import type { GearType, RuneCategory, GearItem as GearItemType, RuneItem as RuneItemType, Character, Loadout, CharacterState, Enchantment, EnchantRarity, Skin, SkinState } from '../types';
+import type { GearType, RuneCategory, GearItem as GearItemType, RuneItem as RuneItemType, Character, Loadout, CharacterState, Enchantment, EnchantRarity, Skin, SkinState, GearRarity, RuneRarity, WeaponSkin } from '../types';
 
 const PlusIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg
@@ -37,6 +37,7 @@ export const Dashboard: React.FC = () => {
     resonanceIndex?: number;
     enchantPool?: Enchantment[];
     skinIndex?: number;
+    enchantSlotIndex?: number;
   }>({
     isOpen: false,
     type: 'character',
@@ -63,14 +64,15 @@ export const Dashboard: React.FC = () => {
     setModalConfig({ isOpen: true, type: 'rune', targetId: category, runeCategory: category, runeIndex: index });
   };
 
-  const openEnchantModal = (category: RuneCategory, index: number) => {
+  const openEnchantModal = (category: RuneCategory, index: number, slotIndex: number = 0) => {
     const rune = state.runes[category][index].item;
     if (!rune) return;
 
     const common = COMMON_ENCHANTS[category] || [];
     const categorySpecific = rune.gameplayCategory ? (CATEGORY_ENCHANTS[rune.gameplayCategory]?.[category as 'enhancement' | 'ability'] || []) : [];
     const unique = rune.uniqueEnchant ? [rune.uniqueEnchant] : [];
-    const pool = [...common, ...categorySpecific, ...unique];
+    const twinUniques = rune.uniqueEnchants || [];
+    const pool = [...common, ...categorySpecific, ...unique, ...twinUniques];
 
     setModalConfig({
       isOpen: true,
@@ -78,7 +80,8 @@ export const Dashboard: React.FC = () => {
       targetId: category,
       runeCategory: category,
       runeIndex: index,
-      enchantPool: pool
+      enchantPool: pool,
+      enchantSlotIndex: slotIndex
     });
   };
 
@@ -100,7 +103,7 @@ export const Dashboard: React.FC = () => {
     setModalConfig({ isOpen: true, type: 'resonance', targetId: `resonance-${index}`, resonanceIndex: index });
   };
 
-  const handleSelect = (item: any, rarity?: any, stars?: number) => {
+  const handleSelect = (item: Character | GearItemType | RuneItemType | Enchantment | Skin | WeaponSkin | null, rarity?: GearRarity | RuneRarity | EnchantRarity | null, stars?: number) => {
     if (modalConfig.type === 'character') {
       if (item) {
         dispatch({ type: 'SET_CHARACTER', payload: (item as Character).id });
@@ -143,13 +146,13 @@ export const Dashboard: React.FC = () => {
       } : undefined;
       dispatch({ type: 'SET_RESONANCE', payload: { index: modalConfig.resonanceIndex!, character: resonanceChar } });
     } else if (modalConfig.type === 'gear') {
-      const gearItem = item ? { ...item, rarity } as GearItemType : undefined;
+      const gearItem = item ? { ...item as GearItemType, rarity: rarity as GearRarity } : undefined;
       dispatch({
         type: 'SET_GEAR',
         payload: { slot: modalConfig.targetId as keyof Loadout['gear'], item: gearItem }
       });
     } else if (modalConfig.type === 'rune') {
-      const runeItem = item ? { ...item, rarity } as RuneItemType : undefined;
+      const runeItem = item ? { ...item as RuneItemType, rarity: rarity as RuneRarity } : undefined;
       dispatch({
         type: 'SET_RUNE',
         payload: { category: modalConfig.runeCategory!, index: modalConfig.runeIndex!, item: runeItem }
@@ -160,8 +163,9 @@ export const Dashboard: React.FC = () => {
         payload: {
           category: modalConfig.runeCategory!,
           index: modalConfig.runeIndex!,
-          enchantId: item?.id,
-          rarity: rarity as EnchantRarity
+          enchantId: (item as Enchantment)?.id,
+          rarity: rarity as EnchantRarity,
+          slotIndex: modalConfig.enchantSlotIndex
         }
       });
     }
@@ -243,24 +247,27 @@ export const Dashboard: React.FC = () => {
     { x: (1044 / 1608) * 100, y: (1094 / 1259) * 100 },
   ];
 
-  const renderRuneSlot = (category: RuneCategory, index: number, coords: { x: number, y: number }, isEtched: boolean = false) => {
+  const renderRuneSlot = (category: RuneCategory, index: number, coords: { x: number, y: number }, isEtched: boolean = false, hideEnchants: boolean = false, enchantsOnly: boolean = false) => {
     const slot = state.runes[category][index];
     const hasItem = !!slot.item;
-    const hasEnchant = !!slot.enchantId;
 
     const canEnchant = hasItem && !isEtched && RUNE_RARITY_ORDER.indexOf(slot.item!.rarity) >= RUNE_RARITY_ORDER.indexOf(MIN_ENCHANT_RARITY);
 
+    const bubbleSide = (category === 'blessing' || category === 'etched') 
+      ? 'center' 
+      : (coords.x < 50 ? 'right' : 'left');
+
     return (
       <div
-        key={`${category}-${index}`}
+        key={`${category}-${index}-${enchantsOnly ? 'enchants' : 'base'}`}
         className="absolute transition-transform -translate-x-1/2 -translate-y-1/2 z-30 group"
         style={{ top: `${coords.y}%`, left: `${coords.x}%`, width: isEtched ? '14.5%' : '13.5%', height: isEtched ? '18.5%' : '17.3%' }}
       >
         <button
-          onClick={() => openRuneModal(category, index)}
-          className="w-full h-full flex items-center justify-center active:scale-90 transition-transform relative"
+          onClick={() => !enchantsOnly && openRuneModal(category, index)}
+          className={`w-full h-full flex items-center justify-center transition-transform relative ${enchantsOnly ? 'pointer-events-none' : 'active:scale-90'}`}
         >
-          {isEtched && (
+          {!enchantsOnly && isEtched && (
             <img
               src={`${import.meta.env.BASE_URL}assets/ui/Frame_4.png`}
               alt=""
@@ -272,31 +279,19 @@ export const Dashboard: React.FC = () => {
               item={slot.item!}
               enchantId={slot.enchantId}
               enchantRarity={slot.enchantRarity}
+              enchantId2={slot.enchantId2}
+              enchantRarity2={slot.enchantRarity2}
+              bubbleSide={bubbleSide}
+              onEnchantClick={(slotIdx) => openEnchantModal(category, index, slotIdx)}
+              canEnchant={canEnchant}
               className="w-full h-full"
+              hideEnchants={hideEnchants}
+              enchantsOnly={enchantsOnly}
             />
           ) : (
-            <PlusIcon className="w-1/2 h-1/2 text-zinc-400/20 group-hover:text-zinc-400/40 transition-colors relative z-10" />
+            !enchantsOnly && <PlusIcon className="w-1/2 h-1/2 text-zinc-400/20 group-hover:text-zinc-400/40 transition-colors relative z-10" />
           )}
         </button>
-
-        {canEnchant && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              openEnchantModal(category, index);
-            }}
-            className={`absolute z-40 transition-all hover:scale-110 active:scale-95 shadow-lg ${hasEnchant
-                ? 'top-0 right-0 sm:-top-1 sm:-right-1'
-                : '-top-2 -right-2 w-8 h-8 bg-black/60 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center hover:bg-accent/40'
-              }`}
-          >
-            {hasEnchant ? (
-              <div className="w-8 h-4 sm:w-12 sm:h-6" />
-            ) : (
-              <PlusIcon className="w-1/2 h-1/2 text-white" />
-            )}
-          </button>
-        )}
       </div>
     );
   };
@@ -314,7 +309,7 @@ export const Dashboard: React.FC = () => {
             <NineSliceButton
               key={t.id}
               imageSrc={activeTab === t.id ? `${import.meta.env.BASE_URL}assets/ui/tab_xuanzhong_3.png` : `${import.meta.env.BASE_URL}assets/ui/tab_weixuanzhong_2.png`}
-              onClick={() => setActiveTab(t.id as any)}
+              onClick={() => setActiveTab(t.id as 'gear' | 'runes')}
               // origin-bottom ensures expansion happens upwards, not into the content
               className={`w-28 h-10 text-[10px] lowercase tracking-normal border-b-0 rounded-b-none origin-bottom transition-all duration-200 ${activeTab === t.id ? 'z-20 scale-y-110' : 'z-10 opacity-80'
                 }`}
@@ -374,10 +369,20 @@ export const Dashboard: React.FC = () => {
                 {renderResonance(1)}
               </div>
             </div>
-            {enhancementCoords.map((pos, i) => renderRuneSlot('enhancement', i, pos))}
-            {abilityCoords.map((pos, i) => renderRuneSlot('ability', i, pos))}
-            {blessingCoords.map((pos, i) => renderRuneSlot('blessing', i, pos))}
-            {etchedCoords.map((pos, i) => renderRuneSlot('etched', i, pos, true))}
+
+            {/* Pass 1: Runes only */}
+            {blessingCoords.map((pos, i) => renderRuneSlot('blessing', i, pos, false, true))}
+            {enhancementCoords.map((pos, i) => renderRuneSlot('enhancement', i, pos, false, true))}
+            {abilityCoords.map((pos, i) => renderRuneSlot('ability', i, pos, false, true))}
+            {etchedCoords.map((pos, i) => renderRuneSlot('etched', i, pos, true, true))}
+
+            {/* Pass 2: Enchants only */}
+            <div className="absolute inset-0 pointer-events-none z-40">
+              {blessingCoords.map((pos, i) => renderRuneSlot('blessing', i, pos, false, false, true))}
+              {enhancementCoords.map((pos, i) => renderRuneSlot('enhancement', i, pos, false, false, true))}
+              {abilityCoords.map((pos, i) => renderRuneSlot('ability', i, pos, false, false, true))}
+              {etchedCoords.map((pos, i) => renderRuneSlot('etched', i, pos, true, false, true))}
+            </div>
           </div>
         )}
       </div>

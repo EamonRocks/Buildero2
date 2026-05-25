@@ -54,6 +54,10 @@ const GLOBALCRIT_RARITIES = ['epic', 'legendary', 'mythic'] as const;
 const BOSSMINION_RARITIES = ['fine', 'rare', 'epic', 'legendary', 'mythic'] as const;
 const UNIQUE_RARITIES = ['legendary', 'mythic'] as const;
 
+const createUnique = (id: string, sid: string): Enchantment => ({
+  id, sid, name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES]
+});
+
 export const COMMON_ENCHANTS: Record<RuneCategory, Enchantment[]> = {
   enhancement: [
     { id: 'atk_pwr', sid: '00', name: 'ATK PWR', availableRarities: [...ATK_MAXHP_RARITIES] },
@@ -157,162 +161,225 @@ export const RUNE_DATABASE: Record<string, Omit<RuneItem, 'rarity'>> = {
   // Enhancement
   'enhancement_sawblade': { 
     id: 'enhancement_sawblade', sid: '18', name: 'Sawblade Circle', category: 'enhancement', gameplayCategory: 'Circles',
-    uniqueEnchant: { id: 'saw_unique', sid: '19', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('saw_unique', '19')
   },
   'enhancement_spin': { 
     id: 'enhancement_spin', sid: '1a', name: 'Spin SPD Up', category: 'enhancement', gameplayCategory: 'Circles',
-    uniqueEnchant: { id: 'spin_unique', sid: '1b', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('spin_unique', '1b')
   },
   'enhancement_dragonflight': { 
     id: 'enhancement_dragonflight', sid: '1c', name: 'Dragonflight Sword', category: 'enhancement', gameplayCategory: 'Sword Strikes',
-    uniqueEnchant: { id: 'dragon_unique', sid: '1d', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('dragon_unique', '1d')
   },
   'enhancement_ricochet': { 
     id: 'enhancement_ricochet', sid: '1e', name: 'Ricochet Strike', category: 'enhancement', gameplayCategory: 'Sword Strikes',
-    uniqueEnchant: { id: 'rico_unique', sid: '1f', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('rico_unique', '1f')
   },
   'enhancement_multishot': { 
     id: 'enhancement_multishot', sid: '1g', name: 'Sprite Multishot', category: 'enhancement', gameplayCategory: 'Sprites',
-    uniqueEnchant: { id: 'multi_unique', sid: '1h', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('multi_unique', '1h')
   },
   'enhancement_link': { 
     id: 'enhancement_link', sid: '1i', name: 'Sprite Link', category: 'enhancement', gameplayCategory: 'Sprites',
-    uniqueEnchant: { id: 'link_unique', sid: '1j', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('link_unique', '1j')
   },
   'enhancement_giant': { 
     id: 'enhancement_giant', sid: '1k', name: 'Giant Meteor', category: 'enhancement', gameplayCategory: 'Meteors',
-    uniqueEnchant: { id: 'giant_unique', sid: '1l', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('giant_unique', '1l')
   },
   'enhancement_potion': { 
     id: 'enhancement_potion', sid: '1m', name: 'Potion Magnet', category: 'enhancement', gameplayCategory: 'Meteors',
-    uniqueEnchant: { id: 'pot_unique', sid: '1n', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('pot_unique', '1n')
   },
   'enhancement_sharp': { 
     id: 'enhancement_sharp', sid: '1o', name: 'Sharp Arrow', category: 'enhancement', gameplayCategory: 'Main Weapon',
-    uniqueEnchant: { id: 'sharp_unique', sid: '1p', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('sharp_unique', '1p')
   },
   'enhancement_flamenox': { 
     id: 'enhancement_flamenox', sid: '1q', name: 'Flamenox Seal', category: 'enhancement', gameplayCategory: 'Elemental',
-    uniqueEnchant: { id: 'flame_unique', sid: '1r', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('flame_unique', '1r')
   },
   'enhancement_frostshock': { 
     id: 'enhancement_frostshock', sid: '1s', name: 'Frostshock Seal', category: 'enhancement', gameplayCategory: 'Elemental',
-    uniqueEnchant: { id: 'frost_unique', sid: '1t', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('frost_unique', '1t')
   },
   'enhancement_rootguard': { 
     id: 'enhancement_rootguard', sid: '1u', name: 'Rootguard', category: 'enhancement', gameplayCategory: 'Plants',
-    uniqueEnchant: { id: 'root_unique', sid: '1v', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('root_unique', '1v')
   },
   'enhancement_vine': { 
     id: 'enhancement_vine', sid: '1w', name: 'Vine Bind', category: 'enhancement', gameplayCategory: 'Plants',
-    uniqueEnchant: { id: 'vine_unique', sid: '1x', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('vine_unique', '1x')
   },
 
   // Ability
   'ability_circle': { 
     id: 'ability_circle', sid: '1y', name: 'Circle', category: 'ability', gameplayCategory: 'Circles',
-    uniqueEnchant: { id: 'circle_abi_unique', sid: '1z', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('circle_abi_unique', '1z')
   },
   'ability_ring': { 
     id: 'ability_ring', sid: '20', name: 'Ring of Agony', category: 'ability', gameplayCategory: 'Circles',
-    uniqueEnchant: { id: 'ring_abi_unique', sid: '21', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('ring_abi_unique', '21')
   },
   'ability_sword_time': { 
     id: 'ability_sword_time', sid: '22', name: 'Sword of Time', category: 'ability', gameplayCategory: 'Sword Strikes',
-    uniqueEnchant: { id: 'sword_abi_unique', sid: '23', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('sword_abi_unique', '23')
   },
   'ability_strike_potion': { 
     id: 'ability_strike_potion', sid: '24', name: 'Strike Potion', category: 'ability', gameplayCategory: 'Sword Strikes',
-    uniqueEnchant: { id: 'strike_abi_unique', sid: '25', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('strike_abi_unique', '25')
   },
   'ability_melee': { 
     id: 'ability_melee', sid: '26', name: 'Melee Sprite', category: 'ability', gameplayCategory: 'Sprites',
-    uniqueEnchant: { id: 'melee_abi_unique', sid: '27', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('melee_abi_unique', '27')
   },
   'ability_healing': { 
     id: 'ability_healing', sid: '28', name: 'Healing Sprite', category: 'ability', gameplayCategory: 'Sprites',
-    uniqueEnchant: { id: 'heal_abi_unique', sid: '29', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('heal_abi_unique', '29')
   },
   'ability_arrow_rain': { 
     id: 'ability_arrow_rain', sid: '2a', name: 'Arrow Rain', category: 'ability', gameplayCategory: 'Main Weapon',
-    uniqueEnchant: { id: 'rain_abi_unique', sid: '2b', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('rain_abi_unique', '2b')
   },
   'ability_star_time': { 
     id: 'ability_star_time', sid: '2c', name: 'Star of Time', category: 'ability', gameplayCategory: 'Meteors',
-    uniqueEnchant: { id: 'star_abi_unique', sid: '2d', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('star_abi_unique', '2d')
   },
   'ability_star_fury': { 
     id: 'ability_star_fury', sid: '2e', name: 'Star of Fury', category: 'ability', gameplayCategory: 'Meteors',
-    uniqueEnchant: { id: 'fury_abi_unique', sid: '2f', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('fury_abi_unique', '2f')
   },
   'ability_flamenox': { 
     id: 'ability_flamenox', sid: '2g', name: 'Flamenox Touch', category: 'ability', gameplayCategory: 'Elemental',
-    uniqueEnchant: { id: 'flame_abi_unique', sid: '2h', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('flame_abi_unique', '2h')
   },
   'ability_frostshock': { 
     id: 'ability_frostshock', sid: '2i', name: 'Frostshock Touch', category: 'ability', gameplayCategory: 'Elemental',
-    uniqueEnchant: { id: 'frost_abi_unique', sid: '2j', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('frost_abi_unique', '2j')
   },
   'ability_plant_summon': { 
     id: 'ability_plant_summon', sid: '2k', name: 'Plant Summon', category: 'ability', gameplayCategory: 'Plants',
-    uniqueEnchant: { id: 'plant_abi_unique', sid: '2l', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('plant_abi_unique', '2l')
   },
   'ability_equinox_bloom': { 
     id: 'ability_equinox_bloom', sid: '2m', name: 'Equinox Bloom', category: 'ability', gameplayCategory: 'Plants',
-    uniqueEnchant: { id: 'bloom_abi_unique', sid: '2n', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('bloom_abi_unique', '2n')
   },
 
   // Blessing
   'blessing_guardian': { 
     id: 'blessing_guardian', sid: '2o', name: 'Guardian', category: 'blessing',
-    uniqueEnchant: { id: 'guard_unique', sid: '2p', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('guard_unique', '2p')
   },
   'blessing_devil_pact': { 
     id: 'blessing_devil_pact', sid: '2q', name: 'Devil Pact', category: 'blessing',
-    uniqueEnchant: { id: 'pact_unique', sid: '2r', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('pact_unique', '2r')
   },
   'blessing_rabbit_foot': { 
     id: 'blessing_rabbit_foot', sid: '2s', name: 'Rabbits Foot', category: 'blessing',
-    uniqueEnchant: { id: 'rabbit_unique', sid: '2t', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('rabbit_unique', '2t')
   },
   'blessing_resilience': { 
     id: 'blessing_resilience', sid: '2u', name: 'Resilience', category: 'blessing',
-    uniqueEnchant: { id: 'resil_unique', sid: '2v', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('resil_unique', '2v')
   },
   'blessing_lucky_shadow': { 
     id: 'blessing_lucky_shadow', sid: '2w', name: 'Lucky Shadow', category: 'blessing',
-    uniqueEnchant: { id: 'lucky_unique', sid: '2x', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('lucky_unique', '2x')
   },
   'blessing_revive': { 
     id: 'blessing_revive', sid: '2y', name: 'Revive', category: 'blessing',
-    uniqueEnchant: { id: 'revive_unique', sid: '2z', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('revive_unique', '2z')
   },
   'blessing_intelligence': { 
     id: 'blessing_intelligence', sid: '30', name: 'Intelligence', category: 'blessing',
-    uniqueEnchant: { id: 'intel_unique', sid: '31', name: 'Unique Enchant', availableRarities: [...UNIQUE_RARITIES] }
+    uniqueEnchant: createUnique('intel_unique', '31')
   },
 
   // Etched
-  'etched_arrow_of_echoes': { id: 'etched_arrow_of_echoes', sid: '32', name: 'Arrow of Echoes', category: 'etched' },
-  'etched_pulsing_orb': { id: 'etched_pulsing_orb', sid: '33', name: 'Pulsing Orb', category: 'etched' },
-  'etched_elemental_domain': { id: 'etched_elemental_domain', sid: '34', name: 'Elemental Domain', category: 'etched' },
-  'etched_sprite_awe': { id: 'etched_sprite_awe', sid: '35', name: 'Sprites Awe', category: 'etched' },
-  'etched_sword_strike_split': { id: 'etched_sword_strike_split', sid: '36', name: 'Sword Strike Split', category: 'etched' },
-  'etched_meteor_split': { id: 'etched_meteor_split', sid: '37', name: 'Meteor Split', category: 'etched' },
-  'etched_swordstrike_aerie': { id: 'etched_swordstrike_aerie', sid: '38', name: 'Swordstrike Aerie', category: 'etched' },
-  'etched_sprite_assist': { id: 'etched_sprite_assist', sid: '39', name: 'Sprite Assist', category: 'etched' },
-  'etched_potion_spring': { id: 'etched_potion_spring', sid: '3a', name: 'Potion Spring', category: 'etched' },
-  'etched_elemental_crit': { id: 'etched_elemental_crit', sid: '3b', name: 'Elemental Crit', category: 'etched' },
-  'etched_life_surge': { id: 'etched_life_surge', sid: '3c', name: 'Life Surge', category: 'etched' },
-  'etched_orbital_orb': { id: 'etched_orbital_orb', sid: '3d', name: 'Orbital Orb', category: 'etched' },
-  'etched_echo_scythe': { id: 'etched_echo_scythe', sid: '3e', name: 'Echo Scythe', category: 'etched' },
+  'etched_arrow_of_echoes': { id: 'etched_arrow_of_echoes', sid: '32', name: 'Arrow of Echoes', category: 'etched', gameplayCategory: 'Main Weapon' },
+  'etched_pulsing_orb': { id: 'etched_pulsing_orb', sid: '33', name: 'Pulsing Orb', category: 'etched', gameplayCategory: 'Circles' },
+  'etched_elemental_domain': { id: 'etched_elemental_domain', sid: '34', name: 'Elemental Domain', category: 'etched', gameplayCategory: 'Elemental' },
+  'etched_sprite_awe': { id: 'etched_sprite_awe', sid: '35', name: 'Sprites Awe', category: 'etched', gameplayCategory: 'Sprites' },
+  'etched_sword_strike_split': { id: 'etched_sword_strike_split', sid: '36', name: 'Sword Strike Split', category: 'etched', gameplayCategory: 'Sword Strikes' },
+  'etched_meteor_split': { id: 'etched_meteor_split', sid: '37', name: 'Meteor Split', category: 'etched', gameplayCategory: 'Meteors' },
+  'etched_swordstrike_aerie': { id: 'etched_swordstrike_aerie', sid: '38', name: 'Swordstrike Aerie', category: 'etched', gameplayCategory: 'Sword Strikes' },
+  'etched_sprite_assist': { id: 'etched_sprite_assist', sid: '39', name: 'Sprite Assist', category: 'etched', gameplayCategory: 'Sprites' },
+  'etched_potion_spring': { id: 'etched_potion_spring', sid: '3a', name: 'Potion Spring', category: 'etched', gameplayCategory: 'Meteors' },
+  'etched_elemental_crit': { id: 'etched_elemental_crit', sid: '3b', name: 'Elemental Crit', category: 'etched', gameplayCategory: 'Elemental' },
+  'etched_life_surge': { id: 'etched_life_surge', sid: '3c', name: 'Life Surge', category: 'etched', gameplayCategory: 'Plants' },
+  'etched_orbital_orb': { id: 'etched_orbital_orb', sid: '3d', name: 'Orbital Orb', category: 'etched', gameplayCategory: 'Circles' },
+  'etched_echo_scythe': { id: 'etched_echo_scythe', sid: '3e', name: 'Echo Scythe', category: 'etched', gameplayCategory: 'Main Weapon' },
 
   // ANY Runes
   'any_enhancement': { id: 'any_enhancement', sid: 'za', name: 'ANY Rune', category: 'enhancement' },
   'any_ability': { id: 'any_ability', sid: 'zb', name: 'ANY Rune', category: 'ability' },
   'any_blessing': { id: 'any_blessing', sid: 'zc', name: 'ANY Rune', category: 'blessing' },
   'any_etched': { id: 'any_etched', sid: 'zd', name: 'ANY Rune', category: 'etched' },
-};
+
+  // Twin Enhancement Runes
+  'twin_enhancement_sawblade_spin': { 
+    id: 'twin_enhancement_sawblade_spin', sid: '40', name: 'Sawblade Circle & Spin SPD Up', category: 'enhancement', gameplayCategory: 'Circles', isTwin: true, twinSource1: 'enhancement_sawblade', twinSource2: 'enhancement_spin',
+    uniqueEnchants: [createUnique('saw_unique', '19'), createUnique('spin_unique', '1b')]
+  },
+  'twin_enhancement_dragonflight_ricochet': { 
+    id: 'twin_enhancement_dragonflight_ricochet', sid: '41', name: 'Dragonflight Sword & Ricochet Strike', category: 'enhancement', gameplayCategory: 'Sword Strikes', isTwin: true, twinSource1: 'enhancement_dragonflight', twinSource2: 'enhancement_ricochet',
+    uniqueEnchants: [createUnique('dragon_unique', '1d'), createUnique('rico_unique', '1f')]
+  },
+  'twin_enhancement_multishot_link': { 
+    id: 'twin_enhancement_multishot_link', sid: '42', name: 'Sprite Multishot & Sprite Link', category: 'enhancement', gameplayCategory: 'Sprites', isTwin: true, twinSource1: 'enhancement_multishot', twinSource2: 'enhancement_link',
+    uniqueEnchants: [createUnique('multi_unique', '1h'), createUnique('link_unique', '1j')]
+  },
+  'twin_enhancement_giant_potion': { 
+    id: 'twin_enhancement_giant_potion', sid: '43', name: 'Giant Meteor & Potion Magnet', category: 'enhancement', gameplayCategory: 'Meteors', isTwin: true, twinSource1: 'enhancement_giant', twinSource2: 'enhancement_potion',
+    uniqueEnchants: [createUnique('giant_unique', '1l'), createUnique('pot_unique', '1n')]
+  },
+  'twin_enhancement_flamenox_frostshock': { 
+    id: 'twin_enhancement_flamenox_frostshock', sid: '44', name: 'Flamenox Seal & Frostshock Seal', category: 'enhancement', gameplayCategory: 'Elemental', isTwin: true, twinSource1: 'enhancement_flamenox', twinSource2: 'enhancement_frostshock',
+    uniqueEnchants: [createUnique('flame_unique', '1r'), createUnique('frost_unique', '1t')]
+  },
+  'twin_enhancement_rootguard_vine': { 
+    id: 'twin_enhancement_rootguard_vine', sid: '45', name: 'Rootguard & Vine Bind', category: 'enhancement', gameplayCategory: 'Plants', isTwin: true, twinSource1: 'enhancement_rootguard', twinSource2: 'enhancement_vine',
+    uniqueEnchants: [createUnique('root_unique', '1v'), createUnique('vine_unique', '1x')]
+  },
+  };
+
+  /* Twin Ability Runes (Disabled)
+  RUNE_DATABASE['twin_ability_circle_ring'] = { 
+  id: 'twin_ability_circle_ring', sid: '46', name: 'Circle & Ring of Agony', category: 'ability', gameplayCategory: 'Circles', isTwin: true, twinSource1: 'ability_circle', twinSource2: 'ability_ring',
+  uniqueEnchants: [createUnique('circle_abi_unique', '1z'), createUnique('ring_abi_unique', '21')]
+  };
+  RUNE_DATABASE['twin_ability_sword_strike'] = { 
+  id: 'twin_ability_sword_strike', sid: '47', name: 'Sword of Time & Strike Potion', category: 'ability', gameplayCategory: 'Sword Strikes', isTwin: true, twinSource1: 'ability_sword_time', twinSource2: 'ability_strike_potion',
+  uniqueEnchants: [createUnique('sword_abi_unique', '23'), createUnique('strike_abi_unique', '25')]
+  };
+  RUNE_DATABASE['twin_ability_melee_healing'] = { 
+  id: 'twin_ability_melee_healing', sid: '48', name: 'Melee Sprite & Healing Sprite', category: 'ability', gameplayCategory: 'Sprites', isTwin: true, twinSource1: 'ability_melee', twinSource2: 'ability_healing',
+  uniqueEnchants: [createUnique('melee_abi_unique', '27'), createUnique('heal_abi_unique', '29')]
+  };
+  RUNE_DATABASE['twin_ability_star'] = { 
+  id: 'twin_ability_star', sid: '49', name: 'Star of Time & Star of Fury', category: 'ability', gameplayCategory: 'Meteors', isTwin: true, twinSource1: 'ability_star_time', twinSource2: 'ability_star_fury',
+  uniqueEnchants: [createUnique('star_abi_unique', '2d'), createUnique('fury_abi_unique', '2f')]
+  };
+  RUNE_DATABASE['twin_ability_elemental'] = { 
+  id: 'twin_ability_elemental', sid: '4a', name: 'Flamenox Touch & Frostshock Touch', category: 'ability', gameplayCategory: 'Elemental', isTwin: true, twinSource1: 'ability_flamenox', twinSource2: 'ability_frostshock',
+  uniqueEnchants: [createUnique('flame_abi_unique', '2h'), createUnique('frost_abi_unique', '2j')]
+  };
+  RUNE_DATABASE['twin_ability_plants'] = { 
+  id: 'twin_ability_plants', sid: '4b', name: 'Plant Summon & Equinox Bloom', category: 'ability', gameplayCategory: 'Plants', isTwin: true, twinSource1: 'ability_plant_summon', twinSource2: 'ability_equinox_bloom',
+  uniqueEnchants: [createUnique('plant_abi_unique', '2l'), createUnique('bloom_abi_unique', '2n')]
+  };
+  */
+
+  /* Twin Etched Runes (Disabled)
+  RUNE_DATABASE['twin_etched_arrow_echo'] = { id: 'twin_etched_arrow_echo', sid: '4c', name: 'Arrow of Echoes & Echo Scythe', category: 'etched', gameplayCategory: 'Main Weapon', isTwin: true, twinSource1: 'etched_arrow_of_echoes', twinSource2: 'etched_echo_scythe' };
+  RUNE_DATABASE['twin_etched_orb'] = { id: 'twin_etched_orb', sid: '4d', name: 'Pulsing Orb & Orbital Orb', category: 'etched', gameplayCategory: 'Circles', isTwin: true, twinSource1: 'etched_pulsing_orb', twinSource2: 'etched_orbital_orb' };
+  RUNE_DATABASE['twin_etched_elemental'] = { id: 'twin_etched_elemental', sid: '4e', name: 'Elemental Domain & Elemental Crit', category: 'etched', gameplayCategory: 'Elemental', isTwin: true, twinSource1: 'etched_elemental_domain', twinSource2: 'etched_elemental_crit' };
+  RUNE_DATABASE['twin_etched_sprite'] = { id: 'twin_etched_sprite', sid: '4f', name: 'Sprites Awe & Sprite Assist', category: 'etched', gameplayCategory: 'Sprites', isTwin: true, twinSource1: 'etched_sprite_awe', twinSource2: 'etched_sprite_assist' };
+  RUNE_DATABASE['twin_etched_sword'] = { id: 'twin_etched_sword', sid: '4g', name: 'Sword Strike Split & Swordstrike Aerie', category: 'etched', gameplayCategory: 'Sword Strikes', isTwin: true, twinSource1: 'etched_sword_strike_split', twinSource2: 'etched_swordstrike_aerie' };
+  RUNE_DATABASE['twin_etched_meteor'] = { id: 'twin_etched_meteor', sid: '4h', name: 'Meteor Split & Potion Spring', category: 'etched', gameplayCategory: 'Meteors', isTwin: true, twinSource1: 'etched_meteor_split', twinSource2: 'etched_potion_spring' };
+  */
+
 
 export const WEAPON_SKIN_DATABASE: Record<string, WeaponSkin> = {
   'eldritch_tower': { id: 'eldritch_tower', sid: '3f', name: 'Eldritch Tower', weaponId: 'oracle_weapon', rarity: 'legendary' },
@@ -399,11 +466,11 @@ export const FEATURED_BUILDS: FeaturedBuild[] = [
     code: "B2~BNElemental%20PvE%20Rune%20Setup~BAPokoko~MC0000~E01o6~E11s6~E21q6~E31u5~A02a6~A1206~L02y6~L12s6~T0326~T13b3~T23e2~CS10rk"
   },
   {
-    name: "Welpy13's Basic Dragoon",
+    name: "Basic Dragoon",
     code: "B2~BNBasic%20Dragoon~BAWelpy13~MC0261170~R10f011u0~R20c211o0~GW0cf40~GA0df4~GR0ef4~GH0ff4~GM0gf4~GB0hf4~E01q611a~E11s611a~E21k61la~E31m60ta~A02g612a~A12i612a~A22e62fa~A32c60ua~L02y60fa~L12w60fa~T0376~T13b6~T23a6~CS1bui"
   },
   {
-    name: "Welpy13's Griffin + Oracle Elemental Build",
+    name: "Griffin + Oracle Elemental Build",
     code: "B2~BNGriffin%20%2B%20Oracle%20Elemental%20Build~BAWelpy13~MC0a811l0~R10f511u0~R20e50~GW00f50~GA07f4~GR08f4~GH03f4~GM04f4~GB0bf4~E01q611a~E11s611a~E21g6~E31o60xa~A020621a~A12g612a~A22i612a~A3286~L02y60fa~L12w60fa~T0326~T13b6~T2356~CS1328"
   },
   {

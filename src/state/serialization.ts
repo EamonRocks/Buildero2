@@ -23,7 +23,7 @@ import type {
 
 const V1_VERSION = 1;
 
-// --- V2 COMPACT FORMAT UTILS ---
+// --- V2/V3 COMPACT FORMAT UTILS ---
 
 const RARITY_MAP: string[] = [
   'common', 'fine', 'rare', 'epic', 'epic_1', 'epic_2',
@@ -71,11 +71,202 @@ const WEAPON_SKIN_SID_MAP = Object.fromEntries(Object.values(WEAPON_SKIN_DATABAS
 const ALL_ENCHANTS = [
   ...Object.values(COMMON_ENCHANTS).flat(),
   ...Object.values(CATEGORY_ENCHANTS).flatMap(c => [...c.enhancement, ...c.ability]),
-  ...(Object.values(RUNE_DATABASE).map(r => r.uniqueEnchant).filter(Boolean) as Enchantment[])
+  ...(Object.values(RUNE_DATABASE).map(r => r.uniqueEnchant).filter(Boolean) as Enchantment[]),
+  ...(Object.values(RUNE_DATABASE).flatMap(r => r.uniqueEnchants || []))
 ];
 const ENCHANT_SID_MAP = Object.fromEntries(ALL_ENCHANTS.map(e => [e.sid, e.id]));
 
 const findEnchantById = (id?: string) => ALL_ENCHANTS.find(e => e.id === id);
+
+/**
+ * Serializes a loadout into the B3 compact format.
+ */
+export const exportV3 = (loadout: Loadout): string => {
+  const parts: string[] = ['B3'];
+  
+  if (loadout.name) parts.push(`BN${encodeURIComponent(loadout.name)}`);
+  
+  const serializeChar = (char: CharacterState) => {
+    const base = CHARACTER_DATABASE[char.id];
+    if (!base) return '';
+    let data = base.sid + char.stars.toString(36);
+    data += char.activeSkins.length.toString(36);
+    char.activeSkins.forEach(s => {
+      const skin = SKIN_DATABASE[s.id];
+      if (skin) data += skin.sid + s.stars.toString(36);
+    });
+    return data;
+  };
+
+  parts.push(`MC${serializeChar(loadout.character)}`);
+  loadout.resonances.forEach((r, i) => {
+    if (r) parts.push(`R${i + 1}${serializeChar(r)}`);
+  });
+
+  const GEAR_SLOT_MAP: Record<string, string> = {
+    weapon: 'GW', amulet: 'GA', ring: 'GR', helmet: 'GH', armor: 'GM', boots: 'GB'
+  };
+
+  Object.entries(loadout.gear).forEach(([slot, item]) => {
+    if (item && GEAR_DATABASE[item.id]) {
+      const base = GEAR_DATABASE[item.id];
+      let data = base.sid + rarityToChar(item.rarity) + (item.godforgeLevel || 0).toString(36);
+      if (slot === 'weapon') {
+        const skins = item.activeSkins || [];
+        data += skins.length.toString(36);
+        skins.forEach(s => {
+          const skin = WEAPON_SKIN_DATABASE[s.id];
+          if (skin) data += skin.sid + s.stars.toString(36);
+        });
+      }
+      parts.push(`${GEAR_SLOT_MAP[slot]}${data}`);
+    }
+  });
+
+  const RUNE_CAT_MAP: Record<string, string> = {
+    enhancement: 'E', ability: 'A', blessing: 'L', etched: 'T'
+  };
+
+  Object.entries(loadout.runes).forEach(([cat, slots]) => {
+    slots.forEach((s, i) => {
+      if (s.item && RUNE_DATABASE[s.item.id]) {
+        const base = RUNE_DATABASE[s.item.id];
+        let data = base.sid + rarityToChar(s.item.rarity);
+        
+        // Slot 1
+        const enchant = findEnchantById(s.enchantId);
+        if (enchant) {
+          data += enchant.sid + rarityToChar(s.enchantRarity || 'common');
+        }
+
+        // Slot 2
+        const enchant2 = findEnchantById(s.enchantId2);
+        if (enchant2) {
+          data += enchant2.sid + rarityToChar(s.enchantRarity2 || 'common');
+        }
+
+        parts.push(`${RUNE_CAT_MAP[cat]}${i}${data}`);
+      }
+    });
+  });
+
+  const mainStr = parts.join('~');
+  const checksum = crc16(mainStr).toString(36);
+  return `${mainStr}~CS${checksum}`;
+};
+
+/**
+ * Deserializes a B3 compact format string.
+ */
+export const importV3 = (code: string): Loadout => {
+  const sections = code.split('~');
+  const checksumPart = sections.find(s => s.startsWith('CS'));
+  if (!checksumPart) return initialState;
+
+  const mainStr = sections.filter(s => !s.startsWith('CS')).join('~');
+  if (crc16(mainStr).toString(36) !== checksumPart.substring(2)) {
+    console.error('B3 Checksum mismatch');
+    return initialState;
+  }
+
+  const loadout: Loadout = JSON.parse(JSON.stringify(initialState));
+
+  const parseChar = (data: string): CharacterState | undefined => {
+    const charId = CHAR_SID_MAP[data.substring(0, 2)];
+    if (!charId) return undefined;
+    const stars = parseInt(data[2], 36);
+    const skinCount = parseInt(data[3], 36);
+    const activeSkins = [];
+    let pos = 4;
+    for (let i = 0; i < skinCount; i++) {
+      const skinId = SKIN_SID_MAP[data.substring(pos, pos + 2)];
+      const skinStars = parseInt(data[pos + 2], 36);
+      if (skinId) activeSkins.push({ id: skinId, stars: skinStars });
+      pos += 3;
+    }
+    return { id: charId, stars, activeSkins };
+  };
+
+  sections.forEach(s => {
+    const tag = s.substring(0, 2);
+    const data = s.substring(2);
+
+    if (tag === 'BN') loadout.name = decodeURIComponent(data);
+    else if (tag === 'BA') loadout.author = decodeURIComponent(data);
+    else if (tag === 'MC') {
+      const char = parseChar(data);
+      if (char) loadout.character = char;
+    }
+    else if (tag === 'R1' || tag === 'R2') {
+      const char = parseChar(data);
+      loadout.resonances[tag === 'R1' ? 0 : 1] = char;
+    }
+    else if (['GW', 'GA', 'GR', 'GH', 'GM', 'GB'].includes(tag)) {
+      const slotMap: Record<string, keyof Loadout['gear']> = {
+        GW: 'weapon', GA: 'amulet', GR: 'ring', GH: 'helmet', GM: 'armor', GB: 'boots'
+      };
+      const sid = data.substring(0, 2);
+      const gearId = GEAR_SID_MAP[sid];
+      if (gearId) {
+        const item: GearItem = {
+          ...GEAR_DATABASE[gearId],
+          rarity: charToRarity(data[2]) as GearRarity,
+          godforgeLevel: parseInt(data[3], 36),
+          activeSkins: []
+        } as GearItem;
+        if (tag === 'GW' && data.length > 4) {
+          const skinCount = parseInt(data[4], 36);
+          let pos = 5;
+          for (let i = 0; i < skinCount; i++) {
+            const skinId = WEAPON_SKIN_SID_MAP[data.substring(pos, pos + 2)];
+            const skinStars = parseInt(data[pos + 2], 36);
+            if (skinId) item.activeSkins?.push({ id: skinId, stars: skinStars });
+            pos += 3;
+          }
+        }
+        loadout.gear[slotMap[tag]] = item;
+      }
+    }
+    else if (['E', 'A', 'L', 'T'].includes(tag[0])) {
+      const catMap: Record<string, keyof Loadout['runes']> = {
+        E: 'enhancement', A: 'ability', L: 'blessing', T: 'etched'
+      };
+      const cat = catMap[tag[0]];
+      const index = parseInt(tag[1], 10);
+      const sid = data.substring(0, 2);
+      const runeId = RUNE_SID_MAP[sid];
+      if (runeId && loadout.runes[cat][index]) {
+        const runeItem: RuneItem = {
+          ...RUNE_DATABASE[runeId],
+          rarity: charToRarity(data[2]) as RuneRarity
+        } as RuneItem;
+        const slot: RuneSlot = { item: runeItem };
+        
+        // Slot 1
+        if (data.length > 3) {
+          const enchantId = ENCHANT_SID_MAP[data.substring(3, 5)];
+          if (enchantId) {
+            slot.enchantId = enchantId;
+            slot.enchantRarity = charToRarity(data[5]) as EnchantRarity;
+          }
+        }
+
+        // Slot 2
+        if (data.length > 6) {
+          const enchantId2 = ENCHANT_SID_MAP[data.substring(6, 8)];
+          if (enchantId2) {
+            slot.enchantId2 = enchantId2;
+            slot.enchantRarity2 = charToRarity(data[8]) as EnchantRarity;
+          }
+        }
+
+        loadout.runes[cat][index] = slot;
+      }
+    }
+  });
+
+  return loadout;
+};
 
 /**
  * Serializes a loadout into the B2 compact format.
@@ -84,9 +275,6 @@ export const exportV2 = (loadout: Loadout): string => {
   const parts: string[] = ['B2'];
   
   if (loadout.name) parts.push(`BN${encodeURIComponent(loadout.name)}`);
-  if (loadout.author && loadout.author !== 'Unknown' && loadout.author !== '') {
-    parts.push(`BA${encodeURIComponent(loadout.author)}`);
-  }
   
   const serializeChar = (char: CharacterState) => {
     const base = CHARACTER_DATABASE[char.id];
@@ -255,7 +443,7 @@ export const importV2 = (code: string): Loadout => {
  * Public API: Serializes a full Loadout object.
  */
 export const exportLoadout = (loadout: Loadout): string => {
-  return exportV2(loadout);
+  return exportV3(loadout);
 };
 
 /**
@@ -264,6 +452,11 @@ export const exportLoadout = (loadout: Loadout): string => {
 export const importLoadout = (code: string): Loadout => {
   if (!code) return initialState;
   
+  // Detect B3 format
+  if (code.startsWith('B3')) {
+    return importV3(code);
+  }
+
   // Detect B2 format
   if (code.startsWith('B2')) {
     return importV2(code);
@@ -274,6 +467,7 @@ export const importLoadout = (code: string): Loadout => {
     const json = LZString.decompressFromEncodedURIComponent(code);
     if (!json) return initialState;
     
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const payload = JSON.parse(json);
     if (payload.v !== V1_VERSION) return initialState;
     
@@ -336,6 +530,7 @@ export const importLoadout = (code: string): Loadout => {
         });
       }
     });
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 
     return loadout;
   } catch (error) {

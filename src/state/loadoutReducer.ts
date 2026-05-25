@@ -12,7 +12,7 @@ export type LoadoutAction =
   | { type: 'SET_WEAPON_SKIN'; payload: { index: number; skin: SkinState | undefined } }
   | { type: 'TOGGLE_GODFORGE'; payload: { slot: keyof Loadout['gear'] } }
   | { type: 'SET_RUNE', payload: { category: RuneCategory; index: number; item: RuneItem | undefined } }
-  | { type: 'SET_RUNE_ENCHANT'; payload: { category: RuneCategory; index: number; enchantId: string | undefined; rarity: EnchantRarity | undefined } }
+  | { type: 'SET_RUNE_ENCHANT'; payload: { category: RuneCategory; index: number; enchantId: string | undefined; rarity: EnchantRarity | undefined; slotIndex?: number } }
   | { type: 'LOAD_LOADOUT'; payload: Loadout }
   | { type: 'SET_NAME'; payload: string }
   | { type: 'SET_AUTHOR'; payload: string };
@@ -199,6 +199,8 @@ export function loadoutReducer(state: Loadout, action: LoadoutAction): Loadout {
       
       let enchantId = currentSlot.enchantId;
       let enchantRarity = currentSlot.enchantRarity;
+      let enchantId2 = currentSlot.enchantId2;
+      let enchantRarity2 = currentSlot.enchantRarity2;
 
       if (newItem) {
         const rarityIndex = RUNE_RARITY_ORDER.indexOf(newItem.rarity);
@@ -206,28 +208,41 @@ export function loadoutReducer(state: Loadout, action: LoadoutAction): Loadout {
         if (rarityIndex < minIndex) {
           enchantId = undefined;
           enchantRarity = undefined;
+          enchantId2 = undefined;
+          enchantRarity2 = undefined;
         }
 
-        if (enchantId) {
-          const common = COMMON_ENCHANTS[action.payload.category] || [];
-          const categorySpecific = newItem.gameplayCategory ? (CATEGORY_ENCHANTS[newItem.gameplayCategory]?.[action.payload.category as 'enhancement' | 'ability'] || []) : [];
-          const unique = newItem.uniqueEnchant ? [newItem.uniqueEnchant] : [];
-          const pool = [...common, ...categorySpecific, ...unique];
-          
-          if (!pool.some(e => e.id === enchantId)) {
-            enchantId = undefined;
-            enchantRarity = undefined;
-          }
+        const common = COMMON_ENCHANTS[action.payload.category] || [];
+        const categorySpecific = newItem.gameplayCategory ? (CATEGORY_ENCHANTS[newItem.gameplayCategory]?.[action.payload.category as 'enhancement' | 'ability'] || []) : [];
+        const unique = newItem.uniqueEnchant ? [newItem.uniqueEnchant] : [];
+        const twinUniques = newItem.uniqueEnchants || [];
+        const pool = [...common, ...categorySpecific, ...unique, ...twinUniques];
+        
+        if (enchantId && !pool.some(e => e.id === enchantId)) {
+          enchantId = undefined;
+          enchantRarity = undefined;
+        }
+
+        if (!newItem.isTwin) {
+          enchantId2 = undefined;
+          enchantRarity2 = undefined;
+        } else if (enchantId2 && !pool.some(e => e.id === enchantId2)) {
+          enchantId2 = undefined;
+          enchantRarity2 = undefined;
         }
       } else {
         enchantId = undefined;
         enchantRarity = undefined;
+        enchantId2 = undefined;
+        enchantRarity2 = undefined;
       }
 
       newCategoryRunes[action.payload.index] = {
         item: newItem,
         enchantId,
         enchantRarity,
+        enchantId2,
+        enchantRarity2
       };
       return {
         ...state,
@@ -240,11 +255,21 @@ export function loadoutReducer(state: Loadout, action: LoadoutAction): Loadout {
     case 'SET_RUNE_ENCHANT': {
       if (action.payload.category === 'etched') return state;
       const newCategoryRunes = [...state.runes[action.payload.category]];
-      newCategoryRunes[action.payload.index] = {
-        ...newCategoryRunes[action.payload.index],
-        enchantId: action.payload.enchantId,
-        enchantRarity: action.payload.rarity,
-      };
+      const slotIndex = action.payload.slotIndex || 0;
+
+      if (slotIndex === 0) {
+        newCategoryRunes[action.payload.index] = {
+          ...newCategoryRunes[action.payload.index],
+          enchantId: action.payload.enchantId,
+          enchantRarity: action.payload.rarity,
+        };
+      } else {
+        newCategoryRunes[action.payload.index] = {
+          ...newCategoryRunes[action.payload.index],
+          enchantId2: action.payload.enchantId,
+          enchantRarity2: action.payload.rarity,
+        };
+      }
       return {
         ...state,
         runes: {

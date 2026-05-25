@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import ModalPopup from './ModalPopup';
 import ModalSubsection from './ModalSubsection';
 import { NineSliceButton } from './NineSliceButton';
@@ -45,7 +45,6 @@ const ENABLE_IMAGE_SHARE_SHEET = true;
 export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
   const { state, dispatch } = useLoadout();
   const [buildName, setBuildName] = useState('');
-  const [author, setAuthor] = useState('');
   const [copied, setCopied] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
@@ -59,7 +58,6 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       setBuildName(state.name === 'New Build' ? '' : state.name);
-      setAuthor(state.author || '');
       setShareGear(true);
       setShareRunes(true);
       setCopied(false);
@@ -67,23 +65,22 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
         setTimeout(() => inputRef.current?.focus(), 100);
       }
     }
-  }, [isOpen]);
+  }, [isOpen, state.name]);
 
-  const getFilteredLoadout = (nameOverride?: string, authorOverride?: string): Loadout => {
+  const getFilteredLoadout = useCallback((nameOverride?: string): Loadout => {
     return {
       ...state,
       name: nameOverride || buildName.trim() || 'New Build',
-      author: authorOverride || author.trim() || 'Unknown',
       gear: shareGear ? state.gear : {},
       runes: shareRunes ? state.runes : JSON.parse(JSON.stringify(initialState.runes))
     };
-  };
+  }, [state, buildName, shareGear, shareRunes]);
 
   // Memorize the export code calculation
   const exportCode = useMemo(() => {
     if (!isOpen) return '';
     return exportLoadout(getFilteredLoadout());
-  }, [isOpen, shareGear, shareRunes, buildName, author, state]);
+  }, [isOpen, getFilteredLoadout]);
 
   const isNameValid = (name: string) => {
     const trimmed = name.trim();
@@ -92,24 +89,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
     return regex.test(trimmed);
   };
 
-  const isAuthorValid = (name: string) => {
-    const trimmed = name.trim();
-    if (trimmed.length === 0 || trimmed.length > 20) return false;
-    const regex = /^[a-zA-Z0-9\s]*$/;
-    return regex.test(trimmed);
-  };
-
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     if (val.length <= 40) {
       setBuildName(val);
-    }
-  };
-
-  const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    if (val.length <= 20) {
-      setAuthor(val);
     }
   };
 
@@ -132,10 +115,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
   const handleCopy = () => {
     const finalName = buildName.trim() || 'New Build';
-    const finalAuthor = author.trim() || 'Unknown';
     dispatch({ type: 'SET_NAME', payload: finalName });
-    dispatch({ type: 'SET_AUTHOR', payload: finalAuthor });
-    const finalCode = exportLoadout(getFilteredLoadout(finalName, finalAuthor));
+    const finalCode = exportLoadout(getFilteredLoadout(finalName));
     
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(finalCode).then(() => {
@@ -155,14 +136,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
   const handleShareSheet = async () => {
     const finalName = buildName.trim() || 'New Build';
-    const finalAuthor = author.trim() || 'Unknown';
     dispatch({ type: 'SET_NAME', payload: finalName });
-    dispatch({ type: 'SET_AUTHOR', payload: finalAuthor });
-    const finalCode = exportLoadout(getFilteredLoadout(finalName, finalAuthor));
+    const finalCode = exportLoadout(getFilteredLoadout(finalName));
     
     const shareData: ShareData = {
       title: 'Archero 2 Build',
-      text: `Check out **${finalName}** by *${finalAuthor}* on [Buildero 2](${window.location.href})!\n\nImport code:\n\`\`\`\n${finalCode}\n\`\`\``,
+      text: `Check out **${finalName}** on [Buildero 2](${window.location.href})!\n\nImport code:\n\`\`\`\n${finalCode}\n\`\`\``,
     };
 
     setIsSharing(true);
@@ -203,9 +182,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
 
   const handleDownloadImage = async () => {
     const finalName = buildName.trim() || 'New Build';
-    const finalAuthor = author.trim() || 'Unknown';
     dispatch({ type: 'SET_NAME', payload: finalName });
-    dispatch({ type: 'SET_AUTHOR', payload: finalAuthor });
     
     if (!captureRef.current) return;
     setIsGeneratingImage(true);
@@ -266,17 +243,32 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
       { x: (1044/1608)*100, y: (1094/1259)*100 },
     ];
 
-    const renderRuneSlot = (category: RuneCategory, index: number, coords: {x: number, y: number}, isEtched: boolean = false) => {
+    const renderRuneSlot = (category: RuneCategory, index: number, coords: {x: number, y: number}, isEtched: boolean = false, hideEnchants: boolean = false, enchantsOnly: boolean = false) => {
       const slot = state.runes[category][index];
       if (!slot?.item) return null;
+
+      const bubbleSide = (category === 'blessing' || category === 'etched') 
+        ? 'center' 
+        : (coords.x < 50 ? 'right' : 'left');
+
       return (
         <div 
-          key={`${category}-${index}`}
+          key={`${category}-${index}-${enchantsOnly ? 'enchants' : 'base'}`}
           className="absolute -translate-x-1/2 -translate-y-1/2"
           style={{ top: `${coords.y}%`, left: `${coords.x}%`, width: isEtched ? '14.5%' : '13.5%', height: isEtched ? '18.5%' : '17.3%' }}
         >
-          {isEtched && <img src={`${import.meta.env.BASE_URL}assets/ui/Frame_4.png`} alt="" className="absolute inset-0 w-full h-full object-contain opacity-60" />}
-          <RuneItem item={slot.item} enchantId={slot.enchantId} enchantRarity={slot.enchantRarity} className="w-full h-full" />
+          {!enchantsOnly && isEtched && <img src={`${import.meta.env.BASE_URL}assets/ui/Frame_4.png`} alt="" className="absolute inset-0 w-full h-full object-contain opacity-60" />}
+          <RuneItem 
+            item={slot.item} 
+            enchantId={slot.enchantId} 
+            enchantRarity={slot.enchantRarity} 
+            enchantId2={slot.enchantId2}
+            enchantRarity2={slot.enchantRarity2}
+            bubbleSide={bubbleSide}
+            className="w-full h-full" 
+            hideEnchants={hideEnchants}
+            enchantsOnly={enchantsOnly}
+          />
         </div>
       );
     };
@@ -289,8 +281,6 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
             <img src={`${import.meta.env.BASE_URL}assets/LOGO_EN.png`} alt="" className="w-48 h-auto" />
             <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest">
               <span style={{ color: '#cead7b' }}>{buildName.trim() || 'New Build'}</span>
-              <span className="text-zinc-500">by</span>
-              <span className="text-zinc-500">{author.trim() || 'Unknown'}</span>
             </div>
           </div>
 
@@ -327,10 +317,20 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
           {shareRunes && (
             <div className={`relative aspect-[1608/1259] w-full overflow-hidden border-x border-white/10 bg-black/40 shadow-2xl ${!shareGear ? 'rounded-t-2xl border-t' : ''} rounded-b-2xl border-b`}>
               <img src={`${import.meta.env.BASE_URL}assets/rune_bg.png`} className="absolute inset-0 w-full h-full object-cover" alt="" />
-              {enhancementCoords.map((pos, i) => renderRuneSlot('enhancement', i, pos))}
-              {abilityCoords.map((pos, i) => renderRuneSlot('ability', i, pos))}
-              {blessingCoords.map((pos, i) => renderRuneSlot('blessing', i, pos))}
-              {etchedCoords.map((pos, i) => renderRuneSlot('etched', i, pos, true))}
+              
+              {/* Pass 1: Runes only */}
+              {blessingCoords.map((pos, i) => renderRuneSlot('blessing', i, pos, false, true))}
+              {enhancementCoords.map((pos, i) => renderRuneSlot('enhancement', i, pos, false, true))}
+              {abilityCoords.map((pos, i) => renderRuneSlot('ability', i, pos, false, true))}
+              {etchedCoords.map((pos, i) => renderRuneSlot('etched', i, pos, true, true))}
+
+              {/* Pass 2: Enchants only */}
+              <div className="absolute inset-0 pointer-events-none z-50">
+                {blessingCoords.map((pos, i) => renderRuneSlot('blessing', i, pos, false, false, true))}
+                {enhancementCoords.map((pos, i) => renderRuneSlot('enhancement', i, pos, false, false, true))}
+                {abilityCoords.map((pos, i) => renderRuneSlot('ability', i, pos, false, false, true))}
+                {etchedCoords.map((pos, i) => renderRuneSlot('etched', i, pos, true, false, true))}
+              </div>
             </div>
           )}
 
@@ -355,9 +355,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
   };
 
   const nameIsValid = isNameValid(buildName);
-  const authorIsValid = isAuthorValid(author);
   const anyOptionChecked = shareGear || shareRunes;
-  const isFormValid = nameIsValid && authorIsValid && anyOptionChecked;
+  const isFormValid = nameIsValid && anyOptionChecked;
 
   return (
     <ModalPopup 
@@ -407,24 +406,6 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
                   buildName.trim() !== '' && !nameIsValid ? 'border-red-400 focus:border-red-500' : 'border-[#4a3424]/20 focus:border-accent/50'
                 }`}
               />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className="text-[9px] font-black uppercase text-[#4a3424] opacity-50 px-1">Author</label>
-              <input
-                type="text"
-                value={author}
-                onChange={handleAuthorChange}
-                placeholder="Your Name"
-                className={`w-full bg-white/50 border rounded-lg p-2.5 text-sm font-bold text-[#4a3424] outline-none transition-all placeholder-[#4a3424]/30 ${
-                  author.trim() !== '' && !authorIsValid ? 'border-red-400 focus:border-red-500' : 'border-[#4a3424]/20 focus:border-accent/50'
-                }`}
-              />
-              {author.trim() !== '' && !authorIsValid && (
-                <p className="text-[9px] text-red-600 font-bold px-1">
-                  1-20 characters, letters/numbers only
-                </p>
-              )}
             </div>
 
             <div className="flex gap-6 px-1 pt-1">

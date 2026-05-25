@@ -57,6 +57,15 @@ describe('Loadout Serialization', () => {
     expect(imported.runes.enhancement[0].enchantId).toBe(mockLoadout.runes.enhancement[0].enchantId);
   });
 
+  it('should not include author in export but maintain it as a stub in state', () => {
+    const loadoutWithAuthor = { ...mockLoadout, author: 'Pokoko' };
+    const code = exportLoadout(loadoutWithAuthor);
+    expect(code).not.toContain('BA');
+    
+    const imported = importLoadout(code);
+    expect(imported.author).toBe(''); // Initial state default
+  });
+
   it('should handle legacy versions or invalid codes gracefully', () => {
     // Empty string should return initial state
     expect(importLoadout('')).toEqual(initialState);

@@ -10,6 +10,9 @@ Buildero 2 is a specialized web application designed for **Archero 2** players t
 
 ## 📜 Changelog
 
+### [V1.1.0] - 2026-05-25
+- **Twin Rune Feature:** Implemented "Twin Runes" which allow pairing two runes of the same category to share a single slot, supporting two concurrent enchantment slots and a new V3 serialization format (B3).
+
 ### [V1.0.3] - 2026-04-22
 - **Meta-Rarities:** Introduced dedicated frames for "Legendary+", "Mythic+", and "Mythic+3" gear, as well as "Epic2+" and "Legendary+" runes.
 - **ANY Rune:** Added a special "ANY" rune asset for all categories to signal flexible slot requirements.

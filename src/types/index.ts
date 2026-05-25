@@ -1,4 +1,4 @@
-export const VERSION = '1.0.3';
+export const VERSION = '1.1.0';
 
 export type GearRarity = 
   | 'common' | 'fine' | 'rare' | 'epic' | 'epic_1' | 'epic_2' 
@@ -98,12 +98,18 @@ export interface RuneItem {
   gameplayCategory?: GameplayCategory; // For Enhancement/Ability
   rarity: RuneRarity;
   uniqueEnchant?: Enchantment;
+  isTwin?: boolean;
+  twinSource1?: string;
+  twinSource2?: string;
+  uniqueEnchants?: Enchantment[];
 }
 
 export interface RuneSlot {
   item?: RuneItem;
   enchantId?: string;
   enchantRarity?: EnchantRarity;
+  enchantId2?: string;
+  enchantRarity2?: EnchantRarity;
 }
 
 export interface Skin {
