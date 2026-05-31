@@ -163,10 +163,28 @@ export const importV3 = (code: string): Loadout => {
   const checksumPart = sections.find(s => s.startsWith('CS'));
   if (!checksumPart) return initialState;
 
-  const mainStr = sections.filter(s => !s.startsWith('CS')).join('~');
-  if (crc16(mainStr).toString(36) !== checksumPart.substring(2)) {
-    console.error('B3 Checksum mismatch');
-    return initialState;
+  const dataSections = sections.filter(s => !s.startsWith('CS'));
+  const rawStr = dataSections.join('~');
+  
+  let finalSections = dataSections;
+
+  if (crc16(rawStr).toString(36) !== checksumPart.substring(2)) {
+    // Try re-encoding BN/BA sections (they might have been pasted in decoded format)
+    const reEncodedSections = dataSections.map(s => {
+      if (s.startsWith('BN') || s.startsWith('BA')) {
+        const tag = s.substring(0, 2);
+        const val = s.substring(2);
+        return tag + encodeURIComponent(val);
+      }
+      return s;
+    });
+    const reEncodedStr = reEncodedSections.join('~');
+    if (crc16(reEncodedStr).toString(36) === checksumPart.substring(2)) {
+      finalSections = reEncodedSections;
+    } else {
+      console.error('B3 Checksum mismatch');
+      return initialState;
+    }
   }
 
   const loadout: Loadout = JSON.parse(JSON.stringify(initialState));
@@ -187,7 +205,7 @@ export const importV3 = (code: string): Loadout => {
     return { id: charId, stars, activeSkins };
   };
 
-  sections.forEach(s => {
+  finalSections.forEach(s => {
     const tag = s.substring(0, 2);
     const data = s.substring(2);
 
@@ -346,7 +364,18 @@ export const importV2 = (code: string): Loadout => {
   const checksumPart = sections.find(s => s.startsWith('CS'));
   if (!checksumPart) return initialState;
 
-  const mainStr = sections.filter(s => !s.startsWith('CS')).join('~');
+  // Re-encode certain parts if they were auto-decoded (e.g. spaces back to %20)
+  // so that the checksum validation still works.
+  const normalizedSections = sections.filter(s => !s.startsWith('CS')).map(s => {
+    if (s.startsWith('BN') || s.startsWith('BA')) {
+      const tag = s.substring(0, 2);
+      const val = s.substring(2);
+      return tag + encodeURIComponent(val).replace(/[!'()*]/g, c => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
+    }
+    return s;
+  });
+
+  const mainStr = normalizedSections.join('~');
   if (crc16(mainStr).toString(36) !== checksumPart.substring(2)) {
     console.error('B2 Checksum mismatch');
     return initialState;

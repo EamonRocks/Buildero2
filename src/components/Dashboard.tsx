@@ -25,7 +25,7 @@ const PlusIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 export const Dashboard: React.FC = () => {
-  const { state, dispatch } = useLoadout();
+  const { state, dispatch, setLastGearRarity, setLastRuneRarity } = useLoadout();
   const [activeTab, setActiveTab] = useState<'gear' | 'runes'>('gear');
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
@@ -146,12 +146,14 @@ export const Dashboard: React.FC = () => {
       } : undefined;
       dispatch({ type: 'SET_RESONANCE', payload: { index: modalConfig.resonanceIndex!, character: resonanceChar } });
     } else if (modalConfig.type === 'gear') {
+      if (rarity) setLastGearRarity(rarity as GearRarity);
       const gearItem = item ? { ...item as GearItemType, rarity: rarity as GearRarity } : undefined;
       dispatch({
         type: 'SET_GEAR',
         payload: { slot: modalConfig.targetId as keyof Loadout['gear'], item: gearItem }
       });
     } else if (modalConfig.type === 'rune') {
+      if (rarity) setLastRuneRarity(rarity as RuneRarity);
       const runeItem = item ? { ...item as RuneItemType, rarity: rarity as RuneRarity } : undefined;
       dispatch({
         type: 'SET_RUNE',

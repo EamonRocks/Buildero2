@@ -68,7 +68,7 @@ const RARITY_GRADIENTS: Record<string, string> = {
 export const SelectionModal: React.FC<SelectionModalProps> = ({
   isOpen, onClose, type, gearType, runeCategory, runeIndex, resonanceIndex, skinIndex, targetId, enchantPool, onSelect
 }) => {
-  const { state } = useLoadout();
+  const { state, lastGearRarity, lastRuneRarity } = useLoadout();
   const [selectedRarity, setSelectedRarity] = useState<GearRarity | RuneRarity | EnchantRarity | null>(null);
   const [selectedItem, setSelectedItem] = useState<Character | GearItemType | RuneItemType | Enchantment | Skin | WeaponSkin | null>(null);
   const [selectedStars, setSelectedStars] = useState<number>(0);
@@ -101,11 +101,19 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
       } else if (type === 'gear') {
         const currentGear = state.gear[targetId as keyof Loadout['gear']];
         setSelectedItem(currentGear ? GEAR_DATABASE[currentGear.id] as GearItemType : null);
-        setSelectedRarity(currentGear?.rarity || null);
+        setSelectedRarity(currentGear?.rarity || lastGearRarity);
       } else if (type === 'rune' && runeCategory && runeIndex !== undefined) {
         const currentRune = state.runes[runeCategory][runeIndex];
         setSelectedItem(currentRune?.item ? RUNE_DATABASE[currentRune.item.id] as RuneItemType : null);
-        setSelectedRarity(currentRune?.item?.rarity || null);
+        
+        const initialRarity = currentRune?.item?.rarity || lastRuneRarity;
+        const availableRarities = (runeCategory === 'blessing' || runeCategory === 'etched') ? ADVANCED_RUNE_RARITIES : RUNE_RARITIES;
+        
+        if (initialRarity && (availableRarities as string[]).includes(initialRarity as string)) {
+          setSelectedRarity(initialRarity);
+        } else {
+          setSelectedRarity(null);
+        }
       } else if (type === 'enchant') {
         const currentRune = state.runes[runeCategory!][runeIndex!];
         const currentEnchant = enchantPool?.find(e => e.id === currentRune.enchantId);
@@ -114,7 +122,7 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, type, targetId, runeCategory, runeIndex, resonanceIndex, skinIndex]);
+  }, [isOpen, type, targetId, runeCategory, runeIndex, resonanceIndex, skinIndex, lastGearRarity, lastRuneRarity]);
 
   if (!isOpen) return null;
 

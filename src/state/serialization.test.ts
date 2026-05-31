@@ -91,4 +91,16 @@ describe('Loadout Serialization', () => {
     expect(imported.gear.weapon?.id).toBe('dragoon_weapon');
     expect(imported.gear.weapon?.rarity).toBe('mythic');
   });
+
+  it('should handle B3 codes with decoded characters in name', () => {
+    const loadout: Loadout = { ...initialState, name: 'Build & Test' };
+    const originalCode = exportLoadout(loadout);
+    
+    // Simulating manual modification to decoded format
+    const decodedCode = originalCode.replace('BNBuild%20%26%20Test', 'BNBuild & Test');
+    const imported = importLoadout(decodedCode);
+    
+    expect(imported.name).toBe('Build & Test');
+    expect(imported.character.id).toBe(initialState.character.id);
+  });
 });

@@ -10,6 +10,11 @@ Buildero 2 is a specialized web application designed for **Archero 2** players t
 
 ## 📜 Changelog
 
+### [V1.1.1] - 2026-05-31
+- **Rarity Caching:** Implemented temporary caching for the last selected gear and rune rarities. Empty slots now autoselect the previously used rarity to streamline build creation.
+- **Quick Display Modes:** Added specialized `?mode=json` and `?mode=render` views to facilitate build access from a code.
+- **New Plant Etched Rune:** Added the "Plant Crit" etched rune to the database.
+
 ### [V1.1.0] - 2026-05-25
 - **Twin Rune Feature:** Implemented "Twin Runes" which allow pairing two runes of the same category to share a single slot, supporting two concurrent enchantment slots and a new V3 serialization format (B3).
 

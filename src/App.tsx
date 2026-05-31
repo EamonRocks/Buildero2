@@ -6,14 +6,19 @@ import { ImportModal } from './components/ImportModal';
 import { FeaturedBuildsModal } from './components/FeaturedBuildsModal';
 import { PrivacyModal } from './components/PrivacyModal';
 import { NineSliceButton } from './components/NineSliceButton';
+import { BotView } from './components/BotView';
 import { VERSION } from './types';
 
 function App() {
-  const { state } = useLoadout();
+  const { mode, state } = useLoadout();
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isFeaturedOpen, setIsFeaturedOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+
+  if (mode) {
+    return <BotView />;
+  }
 
   return (
     <div className="min-h-screen flex justify-center selection:bg-accent selection:text-white bg-[#1a2433] relative overflow-hidden">

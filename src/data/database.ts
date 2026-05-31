@@ -310,6 +310,7 @@ export const RUNE_DATABASE: Record<string, Omit<RuneItem, 'rarity'>> = {
   'etched_life_surge': { id: 'etched_life_surge', sid: '3c', name: 'Life Surge', category: 'etched', gameplayCategory: 'Plants' },
   'etched_orbital_orb': { id: 'etched_orbital_orb', sid: '3d', name: 'Orbital Orb', category: 'etched', gameplayCategory: 'Circles' },
   'etched_echo_scythe': { id: 'etched_echo_scythe', sid: '3e', name: 'Echo Scythe', category: 'etched', gameplayCategory: 'Main Weapon' },
+  'etched_plant_crit': { id: 'etched_plant_crit', sid: '3f', name: 'Plant Crit', category: 'etched', gameplayCategory: 'Plants' },
 
   // ANY Runes
   'any_enhancement': { id: 'any_enhancement', sid: 'za', name: 'ANY Rune', category: 'enhancement' },
