@@ -10,6 +10,9 @@ Buildero 2 is a specialized web application designed for **Archero 2** players t
 
 ## 📜 Changelog
 
+### [V1.1.2] - 2026-06-06
+- **New Characters:** Added new characters (and skins) for Demeter ("Wrath of the Earth") and Artemis ("Eclipse Hunt Order").
+
 ### [V1.1.1] - 2026-05-31
 - **Rarity Caching:** Implemented temporary caching for the last selected gear and rune rarities. Empty slots now autoselect the previously used rarity to streamline build creation.
 - **Quick Display Modes:** Added specialized `?mode=json` and `?mode=render` views to facilitate build access from a code.

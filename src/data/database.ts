@@ -434,6 +434,8 @@ export const SKIN_DATABASE: Record<string, Skin> = {
   'eternal_nightglow': { id: 'eternal_nightglow', sid: '1v', name: 'Eternal Nightglow', characterId: 'cleo' },
   'conqueror_of_battles': { id: 'conqueror_of_battles', sid: '1w', name: 'Conqueror Of Battles', characterId: 'wukong' },
   'awakened_stone_monkey': { id: 'awakened_stone_monkey', sid: '1x', name: 'Awakened Stone Monkey', characterId: 'wukong' },
+  'wrath_of_the_earth': { id: 'wrath_of_the_earth', sid: '1y', name: 'Wrath of the Earth', characterId: 'demeter' },
+  'eclipse_hunt_order': { id: 'eclipse_hunt_order', sid: '1z', name: 'Eclipse Hunt Order', characterId: 'artemis' },
 };
 
 export const CHARACTER_DATABASE: Record<string, Character> = {
@@ -454,6 +456,8 @@ export const CHARACTER_DATABASE: Record<string, Character> = {
   'thor': { id: 'thor', sid: '0e', name: 'Thor', skins: ['base', 'lightning_essence', 'waxwane_judgement'] },
   'cleo': { id: 'cleo', sid: '0f', name: 'Cleo', skins: ['base', 'fiery_reckoning', 'eternal_nightglow'] },
   'wukong': { id: 'wukong', sid: '10', name: 'Wukong', skins: ['base', 'conqueror_of_battles', 'awakened_stone_monkey'] },
+  'demeter': { id: 'demeter', sid: '11', name: 'Demeter', skins: ['base', 'wrath_of_the_earth'] },
+  'artemis': { id: 'artemis', sid: '12', name: 'Artemis', skins: ['base', 'eclipse_hunt_order'] },
 };
 
 export interface FeaturedBuild {
