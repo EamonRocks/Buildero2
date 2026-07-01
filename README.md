@@ -10,6 +10,10 @@ Buildero 2 is a specialized web application designed for **Archero 2** players t
 
 ## 📜 Changelog
 
+### [V1.1.3] - 2026-06-30
+- **Twin Ability Runes:** Enabled twin ability runes in the database.
+- **Selection Modal Fix:** Fixed a UI pre-selection bug for the second slot of twin runes in the builder.
+
 ### [V1.1.2] - 2026-06-06
 - **New Characters:** Added new characters (and skins) for Demeter ("Wrath of the Earth") and Artemis ("Eclipse Hunt Order").
 

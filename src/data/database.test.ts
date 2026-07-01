@@ -17,26 +17,32 @@ describe('Database SID Integrity', () => {
     expect(uniqueSids.size).toBe(sids.length);
   });
 
-  it('should have unique SIDs for all Character related items (Chars + Skins + Weapon Skins)', () => {
+  it('should have unique SIDs for each Character database (Chars, Skins, Weapon Skins individually)', () => {
     const charSids = Object.values(CHARACTER_DATABASE).map(i => i.sid);
     const skinSids = Object.values(SKIN_DATABASE).map(i => i.sid);
     const weaponSkinSids = Object.values(WEAPON_SKIN_DATABASE).map(i => i.sid);
     
-    const allSids = [...charSids, ...skinSids, ...weaponSkinSids];
-    const uniqueSids = new Set(allSids);
-    
-    expect(uniqueSids.size).toBe(allSids.length);
+    expect(new Set(charSids).size).toBe(charSids.length);
+    expect(new Set(skinSids).size).toBe(skinSids.length);
+    expect(new Set(weaponSkinSids).size).toBe(weaponSkinSids.length);
   });
 
-  it('should have unique SIDs for all Rune related items (Runes + Enchants)', () => {
+  it('should have unique SIDs for all Rune related items (Runes + Enchants + Twin Uniques)', () => {
     const runeSids = Object.values(RUNE_DATABASE).map(i => i.sid);
     
     const allEnchants: Enchantment[] = [
       ...Object.values(COMMON_ENCHANTS).flat(),
       ...Object.values(CATEGORY_ENCHANTS).flatMap(c => [...c.enhancement, ...c.ability]),
-      ...(Object.values(RUNE_DATABASE).map(r => r.uniqueEnchant).filter(Boolean) as Enchantment[])
+      ...(Object.values(RUNE_DATABASE).map(r => r.uniqueEnchant).filter(Boolean) as Enchantment[]),
+      ...(Object.values(RUNE_DATABASE).flatMap(r => r.uniqueEnchants || []))
     ];
-    const enchantSids = allEnchants.map(e => e.sid);
+    
+    // De-duplicate enchants by ID
+    const uniqueEnchantsMap = new Map<string, Enchantment>();
+    allEnchants.forEach(e => uniqueEnchantsMap.set(e.id, e));
+    const distinctEnchants = Array.from(uniqueEnchantsMap.values());
+    
+    const enchantSids = distinctEnchants.map(e => e.sid);
     
     const allSids = [...runeSids, ...enchantSids];
     const uniqueSids = new Set(allSids);

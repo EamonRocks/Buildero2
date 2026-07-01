@@ -20,6 +20,7 @@ interface SelectionModalProps {
   resonanceIndex?: number;
   enchantPool?: Enchantment[];
   skinIndex?: number;
+  enchantSlotIndex?: number;
   onSelect: (item: Character | GearItemType | RuneItemType | Enchantment | Skin | WeaponSkin | null, rarity?: GearRarity | RuneRarity | EnchantRarity | null, stars?: number) => void;
 }
 
@@ -66,7 +67,7 @@ const RARITY_GRADIENTS: Record<string, string> = {
 };
 
 export const SelectionModal: React.FC<SelectionModalProps> = ({
-  isOpen, onClose, type, gearType, runeCategory, runeIndex, resonanceIndex, skinIndex, targetId, enchantPool, onSelect
+  isOpen, onClose, type, gearType, runeCategory, runeIndex, resonanceIndex, skinIndex, targetId, enchantPool, enchantSlotIndex, onSelect
 }) => {
   const { state, lastGearRarity, lastRuneRarity } = useLoadout();
   const [selectedRarity, setSelectedRarity] = useState<GearRarity | RuneRarity | EnchantRarity | null>(null);
@@ -116,13 +117,15 @@ export const SelectionModal: React.FC<SelectionModalProps> = ({
         }
       } else if (type === 'enchant') {
         const currentRune = state.runes[runeCategory!][runeIndex!];
-        const currentEnchant = enchantPool?.find(e => e.id === currentRune.enchantId);
+        const targetEnchantId = enchantSlotIndex === 1 ? currentRune.enchantId2 : currentRune.enchantId;
+        const targetEnchantRarity = enchantSlotIndex === 1 ? currentRune.enchantRarity2 : currentRune.enchantRarity;
+        const currentEnchant = enchantPool?.find(e => e.id === targetEnchantId);
         setSelectedItem(currentEnchant || null);
-        setSelectedRarity(currentRune.enchantRarity || null);
+        setSelectedRarity(targetEnchantRarity || null);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, type, targetId, runeCategory, runeIndex, resonanceIndex, skinIndex, lastGearRarity, lastRuneRarity]);
+  }, [isOpen, type, targetId, runeCategory, runeIndex, resonanceIndex, skinIndex, lastGearRarity, lastRuneRarity, enchantSlotIndex]);
 
   if (!isOpen) return null;
 

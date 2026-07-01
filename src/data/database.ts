@@ -343,34 +343,31 @@ export const RUNE_DATABASE: Record<string, Omit<RuneItem, 'rarity'>> = {
     id: 'twin_enhancement_rootguard_vine', sid: '45', name: 'Rootguard & Vine Bind', category: 'enhancement', gameplayCategory: 'Plants', isTwin: true, twinSource1: 'enhancement_rootguard', twinSource2: 'enhancement_vine',
     uniqueEnchants: [createUnique('root_unique', '1v'), createUnique('vine_unique', '1x')]
   },
-  };
-
-  /* Twin Ability Runes (Disabled)
-  RUNE_DATABASE['twin_ability_circle_ring'] = { 
-  id: 'twin_ability_circle_ring', sid: '46', name: 'Circle & Ring of Agony', category: 'ability', gameplayCategory: 'Circles', isTwin: true, twinSource1: 'ability_circle', twinSource2: 'ability_ring',
-  uniqueEnchants: [createUnique('circle_abi_unique', '1z'), createUnique('ring_abi_unique', '21')]
-  };
-  RUNE_DATABASE['twin_ability_sword_strike'] = { 
-  id: 'twin_ability_sword_strike', sid: '47', name: 'Sword of Time & Strike Potion', category: 'ability', gameplayCategory: 'Sword Strikes', isTwin: true, twinSource1: 'ability_sword_time', twinSource2: 'ability_strike_potion',
-  uniqueEnchants: [createUnique('sword_abi_unique', '23'), createUnique('strike_abi_unique', '25')]
-  };
-  RUNE_DATABASE['twin_ability_melee_healing'] = { 
-  id: 'twin_ability_melee_healing', sid: '48', name: 'Melee Sprite & Healing Sprite', category: 'ability', gameplayCategory: 'Sprites', isTwin: true, twinSource1: 'ability_melee', twinSource2: 'ability_healing',
-  uniqueEnchants: [createUnique('melee_abi_unique', '27'), createUnique('heal_abi_unique', '29')]
-  };
-  RUNE_DATABASE['twin_ability_star'] = { 
-  id: 'twin_ability_star', sid: '49', name: 'Star of Time & Star of Fury', category: 'ability', gameplayCategory: 'Meteors', isTwin: true, twinSource1: 'ability_star_time', twinSource2: 'ability_star_fury',
-  uniqueEnchants: [createUnique('star_abi_unique', '2d'), createUnique('fury_abi_unique', '2f')]
-  };
-  RUNE_DATABASE['twin_ability_elemental'] = { 
-  id: 'twin_ability_elemental', sid: '4a', name: 'Flamenox Touch & Frostshock Touch', category: 'ability', gameplayCategory: 'Elemental', isTwin: true, twinSource1: 'ability_flamenox', twinSource2: 'ability_frostshock',
-  uniqueEnchants: [createUnique('flame_abi_unique', '2h'), createUnique('frost_abi_unique', '2j')]
-  };
-  RUNE_DATABASE['twin_ability_plants'] = { 
-  id: 'twin_ability_plants', sid: '4b', name: 'Plant Summon & Equinox Bloom', category: 'ability', gameplayCategory: 'Plants', isTwin: true, twinSource1: 'ability_plant_summon', twinSource2: 'ability_equinox_bloom',
-  uniqueEnchants: [createUnique('plant_abi_unique', '2l'), createUnique('bloom_abi_unique', '2n')]
-  };
-  */
+  'twin_ability_circle_ring': { 
+    id: 'twin_ability_circle_ring', sid: '46', name: 'Circle & Ring of Agony', category: 'ability', gameplayCategory: 'Circles', isTwin: true, twinSource1: 'ability_circle', twinSource2: 'ability_ring',
+    uniqueEnchants: [createUnique('circle_abi_unique', '1z'), createUnique('ring_abi_unique', '21')]
+  },
+  'twin_ability_sword_strike': { 
+    id: 'twin_ability_sword_strike', sid: '47', name: 'Sword of Time & Strike Potion', category: 'ability', gameplayCategory: 'Sword Strikes', isTwin: true, twinSource1: 'ability_sword_time', twinSource2: 'ability_strike_potion',
+    uniqueEnchants: [createUnique('sword_abi_unique', '23'), createUnique('strike_abi_unique', '25')]
+  },
+  'twin_ability_melee_healing': { 
+    id: 'twin_ability_melee_healing', sid: '48', name: 'Melee Sprite & Healing Sprite', category: 'ability', gameplayCategory: 'Sprites', isTwin: true, twinSource1: 'ability_melee', twinSource2: 'ability_healing',
+    uniqueEnchants: [createUnique('melee_abi_unique', '27'), createUnique('heal_abi_unique', '29')]
+  },
+  'twin_ability_star': { 
+    id: 'twin_ability_star', sid: '49', name: 'Star of Time & Star of Fury', category: 'ability', gameplayCategory: 'Meteors', isTwin: true, twinSource1: 'ability_star_time', twinSource2: 'ability_star_fury',
+    uniqueEnchants: [createUnique('star_abi_unique', '2d'), createUnique('fury_abi_unique', '2f')]
+  },
+  'twin_ability_elemental': { 
+    id: 'twin_ability_elemental', sid: '4a', name: 'Flamenox Touch & Frostshock Touch', category: 'ability', gameplayCategory: 'Elemental', isTwin: true, twinSource1: 'ability_flamenox', twinSource2: 'ability_frostshock',
+    uniqueEnchants: [createUnique('flame_abi_unique', '2h'), createUnique('frost_abi_unique', '2j')]
+  },
+  'twin_ability_plants': { 
+    id: 'twin_ability_plants', sid: '4b', name: 'Plant Summon & Equinox Bloom', category: 'ability', gameplayCategory: 'Plants', isTwin: true, twinSource1: 'ability_plant_summon', twinSource2: 'ability_equinox_bloom',
+    uniqueEnchants: [createUnique('plant_abi_unique', '2l'), createUnique('bloom_abi_unique', '2n')]
+  }
+};
 
   /* Twin Etched Runes (Disabled)
   RUNE_DATABASE['twin_etched_arrow_echo'] = { id: 'twin_etched_arrow_echo', sid: '4c', name: 'Arrow of Echoes & Echo Scythe', category: 'etched', gameplayCategory: 'Main Weapon', isTwin: true, twinSource1: 'etched_arrow_of_echoes', twinSource2: 'etched_echo_scythe' };
