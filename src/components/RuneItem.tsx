@@ -103,7 +103,7 @@ export const RuneItem: React.FC<RuneItemProps> = ({
   const badgeSrc = getBadgeSrc();
 
   // Anchoring logic for enchantment bubbles
-  let bubbleContainerClasses = 'absolute -top-2 z-20 flex flex-col gap-1';
+  let bubbleContainerClasses = 'absolute -top-2 z-20 flex flex-col gap-0.5';
   if (bubbleSide === 'right') {
     bubbleContainerClasses += ' left-1/2 items-start';
   } else if (bubbleSide === 'left') {
@@ -119,14 +119,14 @@ export const RuneItem: React.FC<RuneItemProps> = ({
     if (!canEnchant && !hasEnchant) return null;
 
     const content = hasEnchant ? (
-      <div className={`px-1.5 py-0.5 rounded-full border border-[#0a0a0c] shadow-md ${RARITY_COLORS[rarity!] || 'bg-zinc-500'} whitespace-nowrap flex items-center justify-center`}>
-        <span className="text-[7px] font-black text-white uppercase tracking-tight leading-tight">
+      <div className={`px-1 py-[0.5px] rounded-full border border-[#0a0a0c] shadow-md ${RARITY_COLORS[rarity!] || 'bg-zinc-500'} whitespace-nowrap flex items-center justify-center`}>
+        <span className="text-[6.5px] font-extrabold text-white uppercase tracking-tighter leading-none">
           {name || '...'}
         </span>
       </div>
     ) : (
-      <div className="w-5 h-5 bg-black/60 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center hover:bg-accent/40 transition-colors shadow-lg">
-        <PlusIcon className="w-3 h-3 text-white" />
+      <div className="w-4 h-4 bg-black/60 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center hover:bg-accent/40 transition-colors shadow-md">
+        <PlusIcon className="w-2.5 h-2.5 text-white" />
       </div>
     );
 

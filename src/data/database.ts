@@ -62,7 +62,7 @@ export const COMMON_ENCHANTS: Record<RuneCategory, Enchantment[]> = {
   enhancement: [
     { id: 'atk_pwr', sid: '00', name: 'ATK PWR', availableRarities: [...ATK_MAXHP_RARITIES] },
     { id: 'boss_dmg', sid: '01', name: 'Boss DMG', availableRarities: [...BOSSMINION_RARITIES] },
-    { id: 'minion_dmg', sid: '02', name: 'More damage vs minions', availableRarities: [...BOSSMINION_RARITIES] },
+    { id: 'minion_dmg', sid: '02', name: 'DMG vs Minions', availableRarities: [...BOSSMINION_RARITIES] },
     { id: 'crit_dmg', sid: '03', name: 'CRIT DMG', availableRarities: [...GLOBALCRIT_RARITIES] },
   ],
   ability: [
@@ -74,12 +74,12 @@ export const COMMON_ENCHANTS: Record<RuneCategory, Enchantment[]> = {
   blessing: [
     { id: 'atk_pwr_bless', sid: '08', name: 'ATK PWR', availableRarities: [...ATK_MAXHP_RARITIES] },
     { id: 'max_hp_bless', sid: '09', name: 'Max HP', availableRarities: [...ATK_MAXHP_RARITIES] },
-    { id: 'reduc_circle', sid: '0a', name: 'Reduced Circle DMG taken', availableRarities: [...BOSSMINION_RARITIES] },
-    { id: 'reduc_sword', sid: '0b', name: 'Reduced Strike DMG taken', availableRarities: [...BOSSMINION_RARITIES] },
-    { id: 'reduc_sprite', sid: '0c', name: 'Reduced Sprite DMG taken', availableRarities: [...BOSSMINION_RARITIES] },
-    { id: 'reduc_weapon', sid: '0d', name: 'Reduced Main Weapon DMG taken', availableRarities: [...BOSSMINION_RARITIES] },
-    { id: 'reduc_meteor', sid: '0e', name: 'Reduced Meteor DMG taken', availableRarities: [...BOSSMINION_RARITIES] },
-    { id: 'reduc_elemental', sid: '0f', name: 'Reduced Elemental DMG taken', availableRarities: [...BOSSMINION_RARITIES] },
+    { id: 'reduc_circle', sid: '0a', name: 'Circle DMG REDUC', availableRarities: [...BOSSMINION_RARITIES] },
+    { id: 'reduc_sword', sid: '0b', name: 'Strike DMG REDUC', availableRarities: [...BOSSMINION_RARITIES] },
+    { id: 'reduc_sprite', sid: '0c', name: 'Sprite DMG REDUC', availableRarities: [...BOSSMINION_RARITIES] },
+    { id: 'reduc_weapon', sid: '0d', name: 'Weapon DMG REDUC', availableRarities: [...BOSSMINION_RARITIES] },
+    { id: 'reduc_meteor', sid: '0e', name: 'Meteor DMG REDUC', availableRarities: [...BOSSMINION_RARITIES] },
+    { id: 'reduc_elemental', sid: '0f', name: 'Element DMG REDUC', availableRarities: [...BOSSMINION_RARITIES] },
   ],
   etched: [],
 };
@@ -366,6 +366,20 @@ export const RUNE_DATABASE: Record<string, Omit<RuneItem, 'rarity'>> = {
   'twin_ability_plants': { 
     id: 'twin_ability_plants', sid: '4b', name: 'Plant Summon & Equinox Bloom', category: 'ability', gameplayCategory: 'Plants', isTwin: true, twinSource1: 'ability_plant_summon', twinSource2: 'ability_equinox_bloom',
     uniqueEnchants: [createUnique('plant_abi_unique', '2l'), createUnique('bloom_abi_unique', '2n')]
+  },
+
+  // Twin Blessing Runes
+  'twin_blessing_bulwark': { 
+    id: 'twin_blessing_bulwark', sid: '4i', name: 'Twinborn - Bulwark', category: 'blessing', isTwin: true, twinSource1: 'blessing_guardian', twinSource2: 'blessing_resilience',
+    uniqueEnchants: [createUnique('guard_unique', '2p'), createUnique('resil_unique', '2v')]
+  },
+  'twin_blessing_lucky_pact': { 
+    id: 'twin_blessing_lucky_pact', sid: '4j', name: 'Twinborn - Lucky Pact', category: 'blessing', isTwin: true, twinSource1: 'blessing_devil_pact', twinSource2: 'blessing_rabbit_foot',
+    uniqueEnchants: [createUnique('pact_unique', '2r'), createUnique('rabbit_unique', '2t')]
+  },
+  'twin_blessing_fortune_shade': { 
+    id: 'twin_blessing_fortune_shade', sid: '4k', name: 'Twinborn - Fortune Shade', category: 'blessing', isTwin: true, twinSource1: 'blessing_lucky_shadow', twinSource2: 'blessing_intelligence',
+    uniqueEnchants: [createUnique('lucky_unique', '2x'), createUnique('intel_unique', '31')]
   }
 };
 

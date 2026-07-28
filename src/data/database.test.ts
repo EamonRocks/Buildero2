@@ -49,4 +49,31 @@ describe('Database SID Integrity', () => {
     
     expect(uniqueSids.size).toBe(allSids.length);
   });
+
+  it('should include the 3 official Twin Blessing Runes', () => {
+    expect(RUNE_DATABASE['twin_blessing_bulwark']).toEqual(expect.objectContaining({
+      id: 'twin_blessing_bulwark',
+      name: 'Twinborn - Bulwark',
+      category: 'blessing',
+      isTwin: true,
+      twinSource1: 'blessing_guardian',
+      twinSource2: 'blessing_resilience'
+    }));
+    expect(RUNE_DATABASE['twin_blessing_lucky_pact']).toEqual(expect.objectContaining({
+      id: 'twin_blessing_lucky_pact',
+      name: 'Twinborn - Lucky Pact',
+      category: 'blessing',
+      isTwin: true,
+      twinSource1: 'blessing_devil_pact',
+      twinSource2: 'blessing_rabbit_foot'
+    }));
+    expect(RUNE_DATABASE['twin_blessing_fortune_shade']).toEqual(expect.objectContaining({
+      id: 'twin_blessing_fortune_shade',
+      name: 'Twinborn - Fortune Shade',
+      category: 'blessing',
+      isTwin: true,
+      twinSource1: 'blessing_lucky_shadow',
+      twinSource2: 'blessing_intelligence'
+    }));
+  });
 });
