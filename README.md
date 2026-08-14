@@ -10,6 +10,9 @@ Buildero 2 is a specialized web application designed for **Archero 2** players t
 
 ## 📜 Changelog
 
+### [V1.1.5] - 2026-08-14
+- **New Characters & Skins:** Added Morty and Rick characters along with their 2 skins each to the database.
+
 ### [V1.1.4] - 2026-07-28
 - **Twin Blessing Runes:** Added the 3 Twin Blessing Runes (Bulwark, Lucky Pact, Fortune Shade) to the database.
 - **Enchantment UI Decluttering:** Tightened enchantment bubble padding, reduced empty slot plus button dimensions, and updated enchantment labels for improved readability and reduced screen clutter.

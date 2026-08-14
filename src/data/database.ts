@@ -447,6 +447,10 @@ export const SKIN_DATABASE: Record<string, Skin> = {
   'awakened_stone_monkey': { id: 'awakened_stone_monkey', sid: '1x', name: 'Awakened Stone Monkey', characterId: 'wukong' },
   'wrath_of_the_earth': { id: 'wrath_of_the_earth', sid: '1y', name: 'Wrath of the Earth', characterId: 'demeter' },
   'eclipse_hunt_order': { id: 'eclipse_hunt_order', sid: '1z', name: 'Eclipse Hunt Order', characterId: 'artemis' },
+  'morty_skin1': { id: 'morty_skin1', sid: '20', name: 'Morty Skin 1', characterId: 'morty' },
+  'morty_skin2': { id: 'morty_skin2', sid: '21', name: 'Morty Skin 2', characterId: 'morty' },
+  'rick_skin1': { id: 'rick_skin1', sid: '22', name: 'Rick Skin 1', characterId: 'rick' },
+  'rick_skin2': { id: 'rick_skin2', sid: '23', name: 'Rick Skin 2', characterId: 'rick' },
 };
 
 export const CHARACTER_DATABASE: Record<string, Character> = {
@@ -469,6 +473,8 @@ export const CHARACTER_DATABASE: Record<string, Character> = {
   'wukong': { id: 'wukong', sid: '10', name: 'Wukong', skins: ['base', 'conqueror_of_battles', 'awakened_stone_monkey'] },
   'demeter': { id: 'demeter', sid: '11', name: 'Demeter', skins: ['base', 'wrath_of_the_earth'] },
   'artemis': { id: 'artemis', sid: '12', name: 'Artemis', skins: ['base', 'eclipse_hunt_order'] },
+  'morty': { id: 'morty', sid: '13', name: 'Morty', skins: ['base', 'morty_skin1', 'morty_skin2'] },
+  'rick': { id: 'rick', sid: '14', name: 'Rick', skins: ['base', 'rick_skin1', 'rick_skin2'] },
 };
 
 export interface FeaturedBuild {

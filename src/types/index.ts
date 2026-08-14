@@ -1,4 +1,4 @@
-export const VERSION = '1.1.4';
+export const VERSION = '1.1.5';
 
 export type GearRarity = 
   | 'common' | 'fine' | 'rare' | 'epic' | 'epic_1' | 'epic_2' 
